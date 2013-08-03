@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Profile.h"
 
 @class FlipsideViewController;
 
@@ -14,8 +15,9 @@
 - (void)flipsideViewControllerDidFinish:(FlipsideViewController *)controller;
 @end
 
-@interface FlipsideViewController : UIViewController
+@interface FlipsideViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
+@property (strong, nonatomic) Profile *profile;
 @property (assign, nonatomic) id <FlipsideViewControllerDelegate> delegate;
 
 - (IBAction)done:(id)sender;

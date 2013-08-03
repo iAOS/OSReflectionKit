@@ -1,0 +1,22 @@
+{
+    "id":1,
+    "name":"Alexandre Santos",
+    "first_name":"Alexandre",
+    "last_name":"Santos",
+    "points":232323,
+    "birthday" : "1983-01-31",
+    "hobbies":[
+               "reading",
+               "cinema",
+               "soccer",
+               "snowboard",
+               "programming :)"
+               ],
+    "address":{
+        "street"   : "1000 Market Street",
+        "suite"    : null,
+        "city"     : "San Francisco",
+        "state"    : "CA",
+        "zip_code" : "94102"
+    }
+}
