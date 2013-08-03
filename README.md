@@ -67,7 +67,6 @@ NSLog(@"Category description: %@", [category fullDescription]);
 The library will automatically match the dictionary keys to the property names of the class `Category`.
 If you have different keys in the dictionary like below:
 
-Sample category dictionary:
 ```objective-c
 categoryDict = @{@"id" : @(1),
                  @"name" : @"Champions",
