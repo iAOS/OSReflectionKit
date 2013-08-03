@@ -17,7 +17,7 @@ OSReflectionKit is based on the AZReflection classes from Alexander Zats.
 
 ## How To Get Started
 
-- Simply [download OSReflectionKit](https://github.com/iAOS/OSReflectionKit/zipball/master) and add the files to your project
+- Simply [download OSReflectionKit](https://github.com/iAOS/OSReflectionKit/zipball/master) and add the files from the OSReflectionKit folder to your project.
 
 Yep, that simple.
 
