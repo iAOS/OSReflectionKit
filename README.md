@@ -17,7 +17,7 @@ OSReflectionKit is based on the AZReflection classes from Alexander Zats.
 
 ## How To Get Started
 
-- Simply [download OSReflectionKit](https://github.com/iAOS/OSReflectionKit/zipball/master) and add the files to your project
+- Simply [download OSReflectionKit](https://github.com/iAOS/OSReflectionKit/zipball/master) and add the files from the OSReflectionKit folder to your project.
 
 Yep, that simple.
 
@@ -91,7 +91,7 @@ You can implement a custom mapping method in the `Category` class, translating e
     {
         NSString *imageURLString = value;
         if(imageURLString)
-            self.imageURL = [NSURL URLWithString:[[WSKarmalotClient serverBaseURL] stringByAppendingPathComponent:imageURLString]];
+            self.imageURL = [NSURL URLWithString:imageURLString];
     }
 }
 
