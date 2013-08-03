@@ -48,6 +48,58 @@ Suposing you have a simple class with the following class:
 To enable object reflection for this class, all you have to is import the `NSObject+OSReflectionKit.h` file where you want to call the reflection methods.
 You can also import the `NSObject+OSReflectionKit.h` file in the project `prefix.pch` file to make it available all over the project.
 
+```objective-c
+#import "NSObject+OSReflectionKit.h"
+
+// ...
+
+categoryDict = @{@"categoryId" : @(1),
+                 @"name" : @"Champions",
+                 @"imageURL" : @"http://www.cruzeiro.com.br/imagem/imgs/escudo.png"}; // Sample dictionary
+
+// Instantiate the Category object with the content from the dictionary
+Category *category = [Category objectFromDictionary:categoryDict];
+
+NSLog(@"Category description: %@", [category fullDescription]);
+```
+
+The library will automatically match the dictionary keys to the property names of the class `Category`.
+If you have different keys in the dictionary like below:
+
+Sample category dictionary:
+```objective-c
+categoryDict = @{@"id" : @(1),
+                 @"name" : @"Champions",
+                 @"image" : @"http://www.cruzeiro.com.br/imagem/imgs/escudo.png"};
+```
+
+You can implement a custom mapping method in the `Category` class, translating each different key to the destination property:
+
+```objective-c
+#import "Category.h"
+
+@implementation Category
+
++ (NSDictionary *)reflectionMapping
+{
+    return @{@"id":@"categoryId", @"image":@"imageURL,*"};
+}
+
+- (void)reflectionTranformsValue:(id)value forKey:(NSString *)propertyName
+{
+    if([propertyName isEqualToString:@"imageURL"])
+    {
+        NSString *imageURLString = value;
+        if(imageURLString)
+            self.imageURL = [NSURL URLWithString:[[WSKarmalotClient serverBaseURL] stringByAppendingPathComponent:imageURLString]];
+    }
+}
+
+@end
+```
+
+The reflectionMapping dictionary may include a custom class `@"customObject,<CustomClass>"` or a custom transformation by including an `*` in the mapping string, like for the imageURL property above.
+
 ## License
 
 OSReflectionKit is available under the MIT license. See the LICENSE file for more info.
