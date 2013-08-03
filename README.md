@@ -15,3 +15,9 @@ Category *category = [Category objectFromDictionary:categoryDict];
 
 ```
 OSReflectionKit is based on the AZReflection classes from Alexander Zats.
+
+## How To Get Started
+
+- [Download OSReflectionKit](https://github.com/iAOS/OSReflectionKit/zipball/master) and add the files to your project
+
+## Overview
