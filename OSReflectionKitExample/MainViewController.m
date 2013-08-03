@@ -6,6 +6,12 @@
 //  Copyright (c) 2013 iAOS Software. All rights reserved.
 //
 
+enum SEG_CONTROL_OPTIONS
+{
+    OPTION_JSON = 0,
+    OPTION_DICTIONARY
+};
+
 #import "MainViewController.h"
 
 @interface MainViewController ()
@@ -98,10 +104,21 @@
     }
     else
     {
-        // Convert the JSON text into a dictionary object
-        NSData *jsonData = [self.textView.text dataUsingEncoding:NSUTF8StringEncoding];
         NSError *error = nil;
-        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
+        Profile *profile = nil;
+        if(self.segControlFileType.selectedSegmentIndex == OPTION_JSON)
+        {
+            // Load the Profile object from the JSON string
+            profile = [Profile objectFromJSON:self.textView.text error:&error];
+        }
+        else
+        {
+            NSDictionary *dictionary = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"profile" ofType:@"plist"]];
+            
+            // Load the Profile object from the dictionary object
+            profile = [Profile objectFromDictionary:dictionary];
+        }
+        
         if(error)
         {
             // Something is wrong with the JSON text
@@ -109,9 +126,6 @@
         }
         else
         {
-            // Load the Profile object from the dictionary
-            Profile *profile = [Profile objectFromDictionary:dictionary];
-            
             [self performSegueWithIdentifier:@"VCProfileDetailsSegueID" sender:profile];
         }
     }
@@ -122,10 +136,27 @@
     [self.textView resignFirstResponder];
 }
 
+- (IBAction)segControlValueChanged:(id)sender
+{
+    if(self.segControlFileType.selectedSegmentIndex == OPTION_JSON)
+    {
+        self.textView.text = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"profile" ofType:@"json"] encoding:NSUTF8StringEncoding error:nil];
+        self.textView.editable = YES;
+    }
+    else
+    {
+        NSDictionary *dictionary = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"profile" ofType:@"plist"]];
+        self.textView.editable = NO;
+        [self.textView resignFirstResponder];
+        self.textView.text = [dictionary description];
+    }
+}
+
 - (void)viewDidUnload {
     [self setTextView:nil];
     [self setBtDismissKeyboard:nil];
     [self setNavBar:nil];
+    [self setSegControlFileType:nil];
     [super viewDidUnload];
 }
 @end

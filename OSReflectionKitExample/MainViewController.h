@@ -14,8 +14,10 @@
 @property (weak, nonatomic) IBOutlet UITextView *textView;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *btDismissKeyboard;
 @property (weak, nonatomic) IBOutlet UINavigationBar *navBar;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *segControlFileType;
 
 - (IBAction)btLoadProfileTouched:(id)sender;
 - (IBAction)dismissKeyboard:(id)sender;
+- (IBAction)segControlValueChanged:(id)sender;
 
 @end

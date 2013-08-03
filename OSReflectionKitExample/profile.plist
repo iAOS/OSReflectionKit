@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Alexandre Santos</string>
+	<key>id</key>
+	<integer>1</integer>
+	<key>first_name</key>
+	<string>Alexandre</string>
+	<key>last_name</key>
+	<string>Santos</string>
+	<key>points</key>
+	<integer>1000</integer>
+	<key>birthday</key>
+	<date>1983-01-31T06:00:00Z</date>
+	<key>address</key>
+	<dict>
+		<key>street</key>
+		<string>400 Getulio Vargas</string>
+		<key>suite</key>
+		<string>Apt 302</string>
+		<key>city</key>
+		<string>Belo Horizonte</string>
+		<key>state</key>
+		<string>MG</string>
+		<key>zip_code</key>
+		<string>31100000</string>
+	</dict>
+	<key>hobbies</key>
+	<array>
+		<string>soccer</string>
+		<string>video games</string>
+		<string>cinema</string>
+	</array>
+</dict>
+</plist>

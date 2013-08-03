@@ -38,6 +38,56 @@
     return [objects copy];
 }
 
++ (id) objectFromJSON:(NSString *)jsonString
+{
+    return [self objectFromJSON:jsonString error:nil];
+}
+
++ (id)objectFromJSON:(NSString *)jsonString error:(NSError **)error
+{
+    // Convert the JSON text into a dictionary object
+    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:error];
+    if(dictionary == nil)
+    {
+        // Something is wrong with the JSON text
+        NSLog(@"Invalid json data: %@", *error);
+        return nil;
+    }
+    else if([dictionary isKindOfClass:[NSDictionary class]])
+    {
+        // Load the Profile object from the dictionary
+        return [self objectFromDictionary:dictionary];
+    }
+    
+    return nil;
+}
+
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray
+{
+    return [self objectsFromJSONArray:jsonArray error:nil];
+}
+
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray error:(NSError **)error
+{
+    // Convert the JSON text into a dictionary object
+    NSData *jsonData = [jsonArray dataUsingEncoding:NSUTF8StringEncoding];
+    NSArray *arrayDicts = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:error];
+    if(arrayDicts == nil)
+    {
+        // Something is wrong with the JSON text
+        NSLog(@"Invalid json data: %@", *error);
+        return nil;
+    }
+    else if([arrayDicts isKindOfClass:[NSArray class]])
+    {
+        // Load the Profile object from the dictionary
+        return [self objectsFromDicts:arrayDicts];
+    }
+    
+    return nil;
+}
+
 #pragma mark - Class Reflection
 
 + (NSArray *) propertyNames

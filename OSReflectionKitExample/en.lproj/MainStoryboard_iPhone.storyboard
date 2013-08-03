@@ -41,7 +41,19 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <items>
-                                    <navigationItem title="OSReflectionKit Demo" id="4mN-yw-HbD">
+                                    <navigationItem id="4mN-yw-HbD">
+                                        <nil key="title"/>
+                                        <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="HjO-P1-DEh">
+                                            <rect key="frame" x="50" y="7" width="190" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <segments>
+                                                <segment title="JSON"/>
+                                                <segment title="Dictionary"/>
+                                            </segments>
+                                            <connections>
+                                                <action selector="segControlValueChanged:" destination="2" eventType="valueChanged" id="irv-87-VoC"/>
+                                            </connections>
+                                        </segmentedControl>
                                         <barButtonItem key="rightBarButtonItem" title="Dismiss" style="done" id="VS7-wm-7Ak">
                                             <connections>
                                                 <action selector="dismissKeyboard:" destination="2" id="EMb-I3-y7B"/>
@@ -56,6 +68,7 @@
                     <connections>
                         <outlet property="btDismissKeyboard" destination="VS7-wm-7Ak" id="t61-JO-5ar"/>
                         <outlet property="navBar" destination="pn7-aS-qp5" id="1Rn-mN-QEZ"/>
+                        <outlet property="segControlFileType" destination="HjO-P1-DEh" id="nsu-mE-ckR"/>
                         <outlet property="textView" destination="zeM-uQ-18i" id="VJq-xg-EoC"/>
                         <segue destination="6" kind="modal" identifier="VCProfileDetailsSegueID" modalTransitionStyle="flipHorizontal" id="oM7-Yg-0kR"/>
                     </connections>
@@ -161,8 +174,10 @@
             <relationships>
                 <relationship kind="action" name="btLoadProfileTouched:"/>
                 <relationship kind="action" name="dismissKeyboard:"/>
+                <relationship kind="action" name="segControlValueChanged:"/>
                 <relationship kind="outlet" name="btDismissKeyboard" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="navBar" candidateClass="UINavigationBar"/>
+                <relationship kind="outlet" name="segControlFileType" candidateClass="UISegmentedControl"/>
                 <relationship kind="outlet" name="textView" candidateClass="UITextView"/>
             </relationships>
         </class>

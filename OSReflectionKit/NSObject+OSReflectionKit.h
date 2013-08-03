@@ -44,6 +44,30 @@
  */
 + (NSArray *) objectsFromDicts:(NSArray *) dicts;
 
+/**
+ Creates an instance from the type of the calling class and sets its properties from a string containing a JSON object.
+ This method converts the jsonString into a dictionary before calling the `-objectFromDictionary:` method.
+ 
+ @param jsonString The string containing the json object data.
+ @param error The error variable to return an error object.
+ @return The instance of the created object
+ @discussion If you have a class that has a property: `NSString` *name, then you can call [CustomClassName objectFromJSON:@"{"name" : "Alexandre Santos"}"] and it will return an object of the type 'CustomClassName' with the attribute 'name' containing the value 'Alexandre Santos'.
+ @see -objectFromDictionary:
+ */
++ (id) objectFromJSON:(NSString *) jsonString error:(NSError **) error;
++ (id) objectFromJSON:(NSString *) jsonString;
+
+/**
+ Creates a `NSArray` instance from the type of the calling class and sets its properties from an array of JSON objects.
+ 
+ @param jsonArray An array of JSON objects containing the json objects data.
+ @param error The error variable to return an error object.
+ @return An array of objects from the calling class type.
+ @see -objectFromJSON:
+ */
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray error:(NSError **) error;;
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray;
+
 ///-----------------------------
 /// @name Class Reflection
 ///-----------------------------
