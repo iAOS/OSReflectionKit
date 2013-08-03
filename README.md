@@ -91,7 +91,7 @@ You can implement a custom mapping method in the `Category` class, translating e
     {
         NSString *imageURLString = value;
         if(imageURLString)
-            self.imageURL = [NSURL URLWithString:[[WSKarmalotClient serverBaseURL] stringByAppendingPathComponent:imageURLString]];
+            self.imageURL = [NSURL URLWithString:imageURLString];
     }
 }
 
