@@ -119,11 +119,32 @@
 
 /**
  Converts the current instance object into a dicitionary.
- 
+
  @return A `NSDictionary` with the values for the properties of the instance, excluding NSNull objects.
  @see -dictionary
  */
 - (NSDictionary *) dictionaryForNonNilProperties;
+
+/**
+ Converts the current instance object into a JSON String.
+ 
+ @discussion If a property is `nil`, an NSNull object will be created for it in the JSON string returned.
+ @param error The error variable to return an error object.
+ @return A `NSString` object formatted as JSON, with the values for the properties of the instance.
+ @see -dictionary
+ */
+- (NSString *) JSONString:(NSError **) error;
+- (NSString *) JSONString;
+
+/**
+ Converts the current instance object into a JSON String.
+ 
+ @param error The error variable to return an error object.
+ @return A `NSString` object formatted as JSON, with the values for the properties of the instance, excluding NSNull objects.
+ @see -JSONString
+ */
+- (NSString *) JSONStringForNonNilProperties:(NSError **) error;
+- (NSString *) JSONStringForNonNilProperties;
 
 /**
  A more readable description of an object, like an `NSDictionary` description.

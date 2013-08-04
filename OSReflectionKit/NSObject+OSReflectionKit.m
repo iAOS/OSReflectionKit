@@ -184,6 +184,36 @@
     return [_dic copy];
 }
 
+- (NSString *)JSONString
+{
+    return [self JSONString:nil];
+}
+
+- (NSString *)JSONString:(NSError **)error
+{
+    NSDictionary *dictionary = [self dictionary];
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:error];
+    NSString *resultAsString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
+    return resultAsString;
+}
+
+- (NSString *)JSONStringForNonNilProperties
+{
+    return [self JSONStringForNonNilProperties:nil];
+}
+
+- (NSString *)JSONStringForNonNilProperties:(NSError **)error
+{
+    NSDictionary *dictionary = [self dictionaryForNonNilProperties];
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:error];
+    NSString *resultAsString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
+    return resultAsString;
+}
+
 - (NSString *) fullDescription
 {
     return [[self dictionary] description];
