@@ -124,7 +124,7 @@
     return [[self propertyNames] count];
 }
 
-+ (NSArray*) arrayPropertiesOfType:(Class) klass
++ (NSArray*) propertyNamesOfType:(Class) klass
 {
     NSArray* properties = [self propertyNames];
     NSMutableArray* arrayProperties = [NSMutableArray array];
@@ -184,6 +184,54 @@
     return [_dic copy];
 }
 
+- (NSDictionary *) dictionaryWithDatesAsStrings
+{
+    NSMutableDictionary *dictionary = [[self dictionary] mutableCopy];
+    
+    // In some cases, like for JSON, which does not accept date objects, we need to convert all NSDate objects to strings first
+    NSArray *dateProperties = [[self class] propertyNamesOfType:[NSDate class]];
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+
+    // TODO: Allow to set the date format
+    [df setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
+    for (NSString *property in dateProperties)
+    {
+        // Convert date to NSString
+        NSDate *date = [self valueForKey:property];
+        if([date isKindOfClass:[NSDate class]])
+        {
+            NSString *dateString = [df stringFromDate:date];
+            [dictionary setObject:dateString forKey:property];
+        }
+    }
+    
+    return dictionary;
+}
+
+- (NSDictionary *) dictionaryForNonNilPropertiesAndDatesAsStrings
+{
+    NSMutableDictionary *dictionary = [[self dictionaryForNonNilProperties] mutableCopy];
+    
+    // In some cases, like for JSON, which does not accept date objects, we need to convert all NSDate objects to strings first
+    NSArray *dateProperties = [[self class] propertyNamesOfType:[NSDate class]];
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+    
+    // TODO: Allow to set the date format
+    [df setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
+    for (NSString *property in dateProperties)
+    {
+        // Convert date to NSString
+        NSDate *date = [self valueForKey:property];
+        if([date isKindOfClass:[NSDate class]])
+        {
+            NSString *dateString = [df stringFromDate:date];
+            [dictionary setObject:dateString forKey:property];
+        }
+    }
+    
+    return dictionary;
+}
+
 - (NSString *)JSONString
 {
     return [self JSONString:nil];
@@ -191,7 +239,7 @@
 
 - (NSString *)JSONString:(NSError **)error
 {
-    NSDictionary *dictionary = [self dictionary];
+    NSDictionary *dictionary = [self dictionaryWithDatesAsStrings];
     
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:error];
     NSString *resultAsString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -206,8 +254,8 @@
 
 - (NSString *)JSONStringForNonNilProperties:(NSError **)error
 {
-    NSDictionary *dictionary = [self dictionaryForNonNilProperties];
-    
+    NSDictionary *dictionary = [self dictionaryForNonNilPropertiesAndDatesAsStrings];
+
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:error];
     NSString *resultAsString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     

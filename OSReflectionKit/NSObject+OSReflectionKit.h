@@ -96,7 +96,7 @@
  @param klass The desired filter class
  @return An array of property names that are of the type `klass`
  */
-+ (NSArray*) arrayPropertiesOfType:(Class) klass;
++ (NSArray*) propertyNamesOfType:(Class) klass;
 
 ///-----------------------------
 /// @name Instance Reflection
