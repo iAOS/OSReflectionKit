@@ -84,9 +84,17 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 		return nil;
 	}
 
+    [self mapObject:instance withDictionary:dictionary rootClass:classReference error:error];
+    
+	return instance;
+}
+
+- (void) mapObject:(id) instance withDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference error:(NSError **)error
+{
 	// Do we have any hints implemented?
 	NSDictionary *mapping = nil;
-	if ([(id)classReference respondsToSelector:@selector(reflectionMapping)]) {
+	if ([(id)classReference respondsToSelector:@selector(reflectionMapping)])
+    {
 		mapping = [classReference reflectionMapping];
 	}
 	
@@ -98,7 +106,8 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
         
 		// Due to language limitations we can't store nil in the dictionary,
 		// that's why obj-c uses artificial [NSNull null] to accomodate
-		if (obj == [NSNull null]) {
+		if (obj == [NSNull null])
+        {
 			obj = nil;
 		}
 		
@@ -107,25 +116,21 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 			if(![self assignValue:obj instance:instance key:key propertyClass:nil error:error])
             {
                 // Automatically lower camelize the key and try again
-//                [self assignValue:obj instance:instance key:[key lowerCamelize] propertyClass:nil error:error];
+                //                [self assignValue:obj instance:instance key:[key lowerCamelize] propertyClass:nil error:error];
             }
 		} else {
 			// we might have a mapping function
 			NSString *mappingHint = [mapping valueForKey:key];
 			BOOL usesTransformer = NO;
 			NSString *customClassString = nil;
-			ParseMappingHint(mappingHint, &key, &usesTransformer, &customClassString);			
+			ParseMappingHint(mappingHint, &key, &usesTransformer, &customClassString);
 			if (usesTransformer && [instance respondsToSelector:@selector(reflectionTranformsValue:forKey:)]) {
 				[instance reflectionTranformsValue:obj forKey:key];
 			} else {
 				[self assignValue:obj instance:instance key:key propertyClass:NSClassFromString(customClassString) error:error];
 			}
 		}
-		
-		
 	}];
-
-	return instance;
 }
 
 - (BOOL)assignValue:(id)value instance:(id)instance key:(NSString *)key propertyClass:(Class)propertyClass error:(NSError **)error
@@ -517,6 +522,16 @@ static const char * getPropertyType(objc_property_t property) {
 + (id)reflectionMapWithDictionary:(NSDictionary *)dictionary error:(NSError **)error
 {
 	return [[AZReflection sharedReflectionMapper] reflectionMapWithDictionary:dictionary rootClass:[self class] error:error];
+}
+
+- (void) mapWithDictionary:(NSDictionary *)dictionary
+{
+    [self mapWithDictionary:dictionary error:nil];
+}
+
+- (void) mapWithDictionary:(NSDictionary *)dictionary error:(NSError **)error
+{
+    [[AZReflection sharedReflectionMapper] mapObject:self withDictionary:dictionary rootClass:[self class] error:error];
 }
 
 + (Class) classForProperty:(NSString *) propertyName
