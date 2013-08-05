@@ -41,7 +41,7 @@ After downloading the project, open the OSReflectionKitExample project and play 
 ### Non-ARC Usage
 - The library files are based on ARC, so if you want to use it in a non-ARC project, please add `-fobjc-arc` compiler flag to the library files.
 
-To set a compiler flag in Xcode, go to your active target and select the "Build Phases" tab. Now select all OSReflectionKit source files, press Enter, insert `-fobjc-arc` or `-fno-objc-arc` and then "Done" to enable or disable ARC for AFNetworking.
+To set a compiler flag in Xcode, go to your active target and select the "Build Phases" tab. Now select all OSReflectionKit source files, press Enter, insert `-fobjc-arc` and then "Done" to enable ARC for OSReflectionKit.
 ## Example Usage
 
 ### Custom Class
