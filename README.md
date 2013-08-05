@@ -1,7 +1,7 @@
 OSReflectionKit
 ===============
 
-OSReflectionKit is a lightweight object reflection library for iOS and Mac OS X, that allows you to instantiate objects from a simple [NSDictionary](http://developer.apple.com/library/ios/#documentation/Cocoa/Reference/Foundation/Classes/NSDictionary_Class/Reference/Reference.html) objects. For example, here's how easy it is to instantiate an object from a dictionary or even directly from a JSON string:
+OSReflectionKit is a lightweight object reflection library for iOS and Mac OS X, that allows you to instantiate objects from a simple [NSDictionary](http://developer.apple.com/library/ios/#documentation/Cocoa/Reference/Foundation/Classes/NSDictionary_Class/Reference/Reference.html) objects or JSON strings. For example, here's how easy it is to instantiate an object from a dictionary or even directly from a JSON string:
 
 ### Loading from a JSON string
 ```objective-c
@@ -26,7 +26,16 @@ categoryDict = @{@"name" : @"Champions", @"imageURL" : @"http://www.cruzeiro.com
 // Instantiate the Category object with the content from the dictionary
 Category *category = [Category objectFromDictionary:categoryDict];
 ```
-OSReflectionKit is based on the AZReflection classes from Alexander Zats.
+### Core Data
+
+OSReflectionKit also supports [NSManagedObject](https://developer.apple.com/library/ios/#documentation/Cocoa/Reference/CoreDataFramework/Classes/NSManagedObject_Class/Reference/NSManagedObject.html) objects.
+To start using it in your project:
+
+- Add the OSReflectionKit and OSReflectionKit+CoreData source files folder in your project.
+- Make sure that the CoreData.framework is setup for your project.
+- Import the "NSManagedObject+OSReflectionKit.h" file wherever you want to have access to the reflection functionalities and you are good to go.
+
+If you want to try it out, you can download the project and open the OSReflectionKit+CoreDataExample project :)
 
 ## How To Get Started
 
@@ -37,6 +46,7 @@ Yep, that simple.
 ### Samples
 
 After downloading the project, open the OSReflectionKitExample project and play a little bit with the code :)
+There is also an example project for using OSReflectionKitExample+CoreData.
 
 ### Non-ARC Usage
 - The library files are based on ARC, so if you want to use it in a non-ARC project, please add `-fobjc-arc` compiler flag to the library files.
