@@ -139,6 +139,7 @@
 		8AEDDE9517B0581D003CF0BF /* OSReflectionKit+CoreDataExample */ = {
 			isa = PBXGroup;
 			children = (
+				8AEDDE7A17B05806003CF0BF /* en.lproj */,
 				8AEDDE7317B05806003CF0BF /* AppDelegate.h */,
 				8AEDDE7417B05806003CF0BF /* AppDelegate.m */,
 				8AEDDE7517B05806003CF0BF /* Default-568h@2x.png */,
@@ -146,7 +147,6 @@
 				8AEDDE7717B05806003CF0BF /* Default@2x.png */,
 				8AEDDE7817B05806003CF0BF /* DetailViewController.h */,
 				8AEDDE7917B05806003CF0BF /* DetailViewController.m */,
-				8AEDDE7A17B05806003CF0BF /* en.lproj */,
 				8AEDDE7F17B05806003CF0BF /* Event.h */,
 				8AEDDE8017B05806003CF0BF /* Event.m */,
 				8AEDDE8117B05806003CF0BF /* main.m */,

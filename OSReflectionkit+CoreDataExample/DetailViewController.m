@@ -30,6 +30,7 @@
 {
     // Update the user interface for the detail item.
 
+    // Serialize the object to JSON
     if (self.detailItem) {
         self.detailDescriptionLabel.text = [self.detailItem JSONString];
     }
