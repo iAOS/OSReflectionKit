@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		AC236F0B17AC908100D22D54 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC236F0A17AC908100D22D54 /* UIKit.framework */; };
 		AC236F0D17AC908100D22D54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC236F0C17AC908100D22D54 /* Foundation.framework */; };
-		AC236F0F17AC908100D22D54 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC236F0E17AC908100D22D54 /* CoreGraphics.framework */; };
 		AC236F3D17AC92FC00D22D54 /* AZReflection.m in Sources */ = {isa = PBXBuildFile; fileRef = AC236F3517AC92FC00D22D54 /* AZReflection.m */; };
 		AC236F4017AC92FC00D22D54 /* NSObject+OSReflectionKit.m in Sources */ = {isa = PBXBuildFile; fileRef = AC236F3C17AC92FC00D22D54 /* NSObject+OSReflectionKit.m */; };
 		AC236F4217AC956B00D22D54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AC236F4117AC956B00D22D54 /* main.m */; };
@@ -30,7 +29,6 @@
 		AC236F0717AC908100D22D54 /* OSReflectionKitExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OSReflectionKitExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC236F0A17AC908100D22D54 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		AC236F0C17AC908100D22D54 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		AC236F0E17AC908100D22D54 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		AC236F1217AC908100D22D54 /* OSReflectionKitExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OSReflectionKitExample-Info.plist"; sourceTree = "<group>"; };
 		AC236F1817AC908100D22D54 /* OSReflectionKitExample-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OSReflectionKitExample-Prefix.pch"; sourceTree = "<group>"; };
 		AC236F3417AC92FC00D22D54 /* AZReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AZReflection.h; sourceTree = "<group>"; };
@@ -64,7 +62,6 @@
 			files = (
 				AC236F0B17AC908100D22D54 /* UIKit.framework in Frameworks */,
 				AC236F0D17AC908100D22D54 /* Foundation.framework in Frameworks */,
-				AC236F0F17AC908100D22D54 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,7 +91,6 @@
 			children = (
 				AC236F0A17AC908100D22D54 /* UIKit.framework */,
 				AC236F0C17AC908100D22D54 /* Foundation.framework */,
-				AC236F0E17AC908100D22D54 /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
