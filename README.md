@@ -29,30 +29,55 @@ Category *category = [Category objectFromDictionary:categoryDict];
 ### Core Data
 
 OSReflectionKit also supports [NSManagedObject](https://developer.apple.com/library/ios/#documentation/Cocoa/Reference/CoreDataFramework/Classes/NSManagedObject_Class/Reference/NSManagedObject.html) objects.
-To start using it in your project:
-
-- Add the OSReflectionKit and OSReflectionKit+CoreData source files folder in your project.
-- Make sure that the CoreData.framework is setup for your project.
-- Import the "NSManagedObject+OSReflectionKit.h" file wherever you want to have access to the reflection functionalities and you are good to go.
 
 If you want to try it out, you can download the project and open the OSReflectionKit+CoreDataExample project :)
 
-## How To Get Started
+## How To Install
 
-- Simply [download OSReflectionKit](https://github.com/iAOS/OSReflectionKit/zipball/master) and add the files from the OSReflectionKit folder to your project.
+- [CocoaPods](http://cocoapods.org) is the recommended way to add OSReflectionKit or OSReflectionKit+CoreData to your project.
+- If you prefer, you can simply [download OSReflectionKit](https://github.com/iAOS/OSReflectionKit/zipball/master) and add the files from the OSReflectionKit folder to your project.
+
+### Requirements
+
+#### OSReflectionKit
+
+- iOS 5.0 or greater.
+- Mac OS X 10.7 or greater.
+- ARC.
+
+#### OSReflectionKit+CoreData
+
+- `OSReflectionKit`
+- iOS 5.0 or greater.
+- ARC.
+
+### Cocoapods
+
+#### OSReflectionKit
+
+1. Add a pod entry for OSReflectionKit to your Podfile `pod 'OSReflectionKit', '~> 0.5.0'`
+2. Install the pod(s) by running `pod install`.
+3. Include OSReflectionKit wherever you need it with `#import "NSObject+OSReflectionKit.h"`.
+
+#### OSReflectionKit+CoreData
+
+1. Add a pod entry for OSReflectionKit+CoreData to your Podfile `pod 'OSReflectionKit+CoreData', '~> 0.5.0'`
+2. Install the pod(s) by running `pod install`.
+3. Include OSReflectionKit+CoreData wherever you need it with `#import "NSManagedObject+OSReflectionKit.h"`.
 
 Yep, that simple.
 
-### Samples
+### Example Usage
 
-After downloading the project, open the OSReflectionKitExample project and play a little bit with the code :)
-There is also an example project for using OSReflectionKitExample+CoreData.
+[Download the project](https://github.com/iAOS/OSReflectionKit/zipball/master) and open the OSReflectionKitExample project and play a little bit with the code :)
+
+There is also an example project for using `OSReflectionKit+CoreData`.
 
 ### Non-ARC Usage
 - The library files are based on ARC, so if you want to use it in a non-ARC project, please add `-fobjc-arc` compiler flag to the library files.
 
 To set a compiler flag in Xcode, go to your active target and select the "Build Phases" tab. Now select all OSReflectionKit source files, press Enter, insert `-fobjc-arc` and then "Done" to enable ARC for OSReflectionKit.
-## Example Usage
+## Samples
 
 ### Custom Class
 
