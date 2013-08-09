@@ -45,7 +45,7 @@
  @return The instance of the created object
  @see -objectFromDictionary:
  */
-+ (id) objectWithController:(NSFetchedResultsController *) controller;
++ (instancetype) objectWithController:(NSFetchedResultsController *) controller;
 
 /**
  Creates an instance from the type of the calling class and sets its properties from a `NSDictionay` object.
@@ -55,7 +55,7 @@
  @discussion If you have a class that has a property: `NSString` *name, then you can call [CustomClassName objectFromDictionay:@{@"name" : @"Alexandre Santos"}] and it will return an object of the type 'CustomClassName' with the attribute 'name' containing the value 'Alexandre Santos'.
  @see -object
  */
-+ (id) objectFromDictionary:(NSDictionary *) dictionary withController:(NSFetchedResultsController *) controller;
++ (instancetype) objectFromDictionary:(NSDictionary *) dictionary withController:(NSFetchedResultsController *) controller;
 
 /**
  Creates a `NSArray` instance from the type of the calling class and sets its properties from an array of `NSDictionay` objects.
@@ -76,8 +76,8 @@
  @discussion If you have a class that has a property: `NSString` *name, then you can call [CustomClassName objectFromJSON:@"{"name" : "Alexandre Santos"}"] and it will return an object of the type 'CustomClassName' with the attribute 'name' containing the value 'Alexandre Santos'.
  @see -objectFromDictionary:
  */
-+ (id) objectFromJSON:(NSString *) jsonString withController:(NSFetchedResultsController *) controller error:(NSError **) error;
-+ (id) objectFromJSON:(NSString *) jsonString withController:(NSFetchedResultsController *) controller;
++ (instancetype) objectFromJSON:(NSString *) jsonString withController:(NSFetchedResultsController *) controller error:(NSError **) error;
++ (instancetype) objectFromJSON:(NSString *) jsonString withController:(NSFetchedResultsController *) controller;
 
 /**
  Creates a `NSArray` instance from the type of the calling class and sets its properties from an array of JSON objects.

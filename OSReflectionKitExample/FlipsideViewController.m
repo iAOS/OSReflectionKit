@@ -19,6 +19,7 @@ enum SECTIONS
 @interface FlipsideViewController ()
 
 @property (nonatomic, strong) NSArray *profilePropertyNames;
+@property (nonatomic, strong) NSArray *addressPropertyNames;
 
 @end
 
@@ -39,6 +40,7 @@ enum SECTIONS
     NSMutableArray *allProperties = [[Profile propertyNames] mutableCopy];
     [allProperties removeObjectsInArray:@[@"address", @"hobbies"]];
     self.profilePropertyNames = allProperties;
+    self.addressPropertyNames = [Address propertyNames];
 }
 
 - (void)didReceiveMemoryWarning
@@ -74,7 +76,7 @@ enum SECTIONS
 
         case SECTION_PROFILE_ADDRESS:
             // All properties for the address
-            numberOfRows = [[[self.profile.address class] propertyNames] count];
+            numberOfRows = [self.addressPropertyNames count];
         break;
             
         case SECTION_PROFILE_HOBBIES:
@@ -126,7 +128,7 @@ enum SECTIONS
         cell = [tableView dequeueReusableCellWithIdentifier:@"CellDetailID"];
 
         Address *address = self.profile.address;
-        NSString *propertyName = [[Address propertyNames] objectAtIndex:indexPath.row];
+        NSString *propertyName = [self.addressPropertyNames objectAtIndex:indexPath.row];
         cell.textLabel.text = [propertyName capitalizedString];
         cell.detailTextLabel.text = [address valueForKey:propertyName];
     }

@@ -14,7 +14,7 @@
 
 #pragma mark - Instanciation Methods
 
-+ (id) object
++ (instancetype) object
 {
     return [[self alloc] init];
 }
@@ -38,12 +38,12 @@
     return [objects copy];
 }
 
-+ (id) objectFromJSON:(NSString *)jsonString
++ (instancetype) objectFromJSON:(NSString *)jsonString
 {
     return [self objectFromJSON:jsonString error:nil];
 }
 
-+ (id)objectFromJSON:(NSString *)jsonString error:(NSError **)error
++ (instancetype)objectFromJSON:(NSString *)jsonString error:(NSError **)error
 {
     // Convert the JSON text into a dictionary object
     NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];

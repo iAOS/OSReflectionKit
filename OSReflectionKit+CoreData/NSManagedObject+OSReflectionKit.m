@@ -12,7 +12,7 @@
 
 #pragma mark - Instanciation Methods
 
-+ (id) objectWithController:(NSFetchedResultsController *) controller
++ (instancetype) objectWithController:(NSFetchedResultsController *) controller
 {
     NSManagedObjectContext *context = [controller managedObjectContext];
     NSEntityDescription *entity = [[controller fetchRequest] entity];
@@ -22,7 +22,7 @@
     return newManagedObject;
 }
 
-+ (id) objectFromDictionary:(NSDictionary *) dictionary withController:(NSFetchedResultsController *) controller
++ (instancetype) objectFromDictionary:(NSDictionary *) dictionary withController:(NSFetchedResultsController *) controller
 {
     id object = [self objectWithController:controller];
     
@@ -49,12 +49,12 @@
     return [objects copy];
 }
 
-+ (id) objectFromJSON:(NSString *)jsonString withController:(NSFetchedResultsController *) controller
++ (instancetype) objectFromJSON:(NSString *)jsonString withController:(NSFetchedResultsController *) controller
 {
     return [self objectFromJSON:jsonString withController:controller error:nil];
 }
 
-+ (id)objectFromJSON:(NSString *)jsonString withController:(NSFetchedResultsController *) controller error:(NSError **)error
++ (instancetype)objectFromJSON:(NSString *)jsonString withController:(NSFetchedResultsController *) controller error:(NSError **)error
 {
     // Convert the JSON text into a dictionary object
     NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
