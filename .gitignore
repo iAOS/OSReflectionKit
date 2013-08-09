@@ -1,6 +1,6 @@
-
 .DS_Store
-
-OSReflectionKitExample/OSReflectionKitExample.xcodeproj/project.xcworkspace/xcuserdata/alexandre.xcuserdatad/UserInterfaceState.xcuserstate
-
 *.xcuserstate
+*.xccheckout
+*.xcbkptlist
+*.xcscheme
+*.plist

@@ -40,7 +40,7 @@ extern NSString *const AZReflectionMapperErrorDomain;
 + (AZReflection *)sharedReflectionMapper;
 - (id)reflectionMapWithDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference error:(NSError **)error;
 
-- (void) mapObject:(id) object withDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference error:(NSError **)error;
+- (BOOL) mapObject:(id) object withDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference error:(NSError **)error;
 
 @end
 
@@ -50,8 +50,8 @@ extern NSString *const AZReflectionMapperErrorDomain;
 + (id)reflectionMapWithDictionary:(NSDictionary *)dictionary error:(NSError **)error;
 
 // Mapping Methods
-- (void) mapWithDictionary:(NSDictionary *)dictionary;
-- (void) mapWithDictionary:(NSDictionary *)dictionary error:(NSError **)error;
+- (BOOL) mapWithDictionary:(NSDictionary *)dictionary;
+- (BOOL) mapWithDictionary:(NSDictionary *)dictionary error:(NSError **)error;
 
 // Properties Methods
 + (NSDictionary *) classProperties;

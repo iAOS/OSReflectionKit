@@ -89,7 +89,7 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 	return instance;
 }
 
-- (void) mapObject:(id) instance withDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference error:(NSError **)error
+- (BOOL) mapObject:(id) instance withDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference error:(NSError **)error
 {
 	// Do we have any hints implemented?
 	NSDictionary *mapping = nil;
@@ -111,26 +111,36 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 			obj = nil;
 		}
 		
-		if (!mapping || ![mapping valueForKey:key]) {
+		if (!mapping || ![mapping valueForKey:key])
+        {
 			// assign directly to the instance
 			if(![self assignValue:obj instance:instance key:key propertyClass:nil error:error])
             {
-                // Automatically lower camelize the key and try again
-                //                [self assignValue:obj instance:instance key:[key lowerCamelize] propertyClass:nil error:error];
+                // TODO: Automatically lower camelize the key and try again
+                //[self assignValue:obj instance:instance key:[key lowerCamelize] propertyClass:nil error:error];
             }
-		} else {
+		}
+        else
+        {
 			// we might have a mapping function
 			NSString *mappingHint = [mapping valueForKey:key];
 			BOOL usesTransformer = NO;
 			NSString *customClassString = nil;
 			ParseMappingHint(mappingHint, &key, &usesTransformer, &customClassString);
-			if (usesTransformer && [instance respondsToSelector:@selector(reflectionTranformsValue:forKey:)]) {
+			if (usesTransformer && [instance respondsToSelector:@selector(reflectionTranformsValue:forKey:)])
+            {
 				[instance reflectionTranformsValue:obj forKey:key];
-			} else {
+			}
+            else
+            {
 				[self assignValue:obj instance:instance key:key propertyClass:NSClassFromString(customClassString) error:error];
 			}
 		}
 	}];
+    
+    BOOL success = (error == nil);
+    
+    return success;
 }
 
 - (BOOL)assignValue:(id)value instance:(id)instance key:(NSString *)key propertyClass:(Class)propertyClass error:(NSError **)error
@@ -417,7 +427,7 @@ static const char * getPropertyType(objc_property_t property) {
 
 @implementation AZReflection (Prefix)
 
-- (id)reflectionMapWithDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference error:(NSError **)error withPrefix:(NSString *) prefixo
+- (id)reflectionMapWithDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference error:(NSError **)error withPrefix:(NSString *) prefix
 {
 	if (!dictionary || ![dictionary isKindOfClass:[NSDictionary class]] || !classReference) {
         if(error)
@@ -425,7 +435,7 @@ static const char * getPropertyType(objc_property_t property) {
 		return nil;
 	}
     
-    if(prefixo)
+    if(prefix)
     {
         id instance = nil;
         
@@ -457,7 +467,7 @@ static const char * getPropertyType(objc_property_t property) {
             // that's why obj-c uses artificial [NSNull null] to accomodate
             
             // Remove o prefixo
-            NSString *atributo = [key stringByReplacingOccurrencesOfString:prefixo withString:@""];
+            NSString *atributo = [key stringByReplacingOccurrencesOfString:prefix withString:@""];
             
             if (obj == [NSNull null]) {
                 obj = nil;
@@ -503,14 +513,13 @@ static const char * getPropertyType(objc_property_t property) {
     for (i = 0; i < outCount; i++) {
         objc_property_t property = properties[i];
         const char *propName = property_getName(property);
-        if(propName) {
+        if(propName)
+        {
             const char *propType = getPropertyType(property);
             NSString *propertyName = [NSString stringWithUTF8String:propName];
-            NSString *propertyType = [NSString stringWithUTF8String:propType];
+            NSString *propertyType = [[NSString alloc] initWithCString:propType encoding:NSUTF16StringEncoding];
             if(propertyType)
                 [results setObject:propertyType forKey:propertyName];
-            else
-                [results removeObjectForKey:propertyName];
         }
     }
     free(properties);
@@ -524,14 +533,14 @@ static const char * getPropertyType(objc_property_t property) {
 	return [[AZReflection sharedReflectionMapper] reflectionMapWithDictionary:dictionary rootClass:[self class] error:error];
 }
 
-- (void) mapWithDictionary:(NSDictionary *)dictionary
+- (BOOL) mapWithDictionary:(NSDictionary *)dictionary
 {
-    [self mapWithDictionary:dictionary error:nil];
+    return [self mapWithDictionary:dictionary error:nil];
 }
 
-- (void) mapWithDictionary:(NSDictionary *)dictionary error:(NSError **)error
+- (BOOL) mapWithDictionary:(NSDictionary *)dictionary error:(NSError **)error
 {
-    [[AZReflection sharedReflectionMapper] mapObject:self withDictionary:dictionary rootClass:[self class] error:error];
+    return [[AZReflection sharedReflectionMapper] mapObject:self withDictionary:dictionary rootClass:[self class] error:error];
 }
 
 + (Class) classForProperty:(NSString *) propertyName
