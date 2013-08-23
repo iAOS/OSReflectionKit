@@ -1,6 +1,6 @@
 //
-//  NSObject+ACReflectionKit.h
-//  Karmalot
+//  NSObject+OSReflectionKit.h
+//  OSReflectionKit
 //
 //  Created by Alexandre on 04/02/13.
 //

@@ -1,6 +1,6 @@
 //
-//  NSObject+ACReflectionKit.m
-//  Karmalot
+//  NSObject+OSReflectionKit.m
+//  OSReflectionKit
 //
 //  Created by Alexandre on 04/02/13.
 //  Copyright (c) 2013 iAOS Software. All rights reserved.
