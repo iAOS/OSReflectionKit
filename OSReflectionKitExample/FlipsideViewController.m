@@ -7,6 +7,7 @@
 //
 
 #import "FlipsideViewController.h"
+#import "ReverseDictViewController.h"
 
 enum SECTIONS
 {
@@ -49,11 +50,24 @@ enum SECTIONS
     // Dispose of any resources that can be recreated.
 }
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if([segue.identifier isEqualToString:@"VCReverseDictSegueID"])
+    {
+        ReverseDictViewController *vc = segue.destinationViewController;
+        
+        vc.dictionary = [self.profile reverseDictionary];
+    }
+}
+
 #pragma mark - Actions
 
 - (IBAction)done:(id)sender
 {
     [self.delegate flipsideViewControllerDidFinish:self];
+}
+
+- (IBAction)btReverseDictionaryTouched:(id)sender {
 }
 
 #pragma mark - TableView Data Source and Delegate

@@ -21,5 +21,6 @@
 @property (assign, nonatomic) id <FlipsideViewControllerDelegate> delegate;
 
 - (IBAction)done:(id)sender;
+- (IBAction)btReverseDictionaryTouched:(id)sender;
 
 @end

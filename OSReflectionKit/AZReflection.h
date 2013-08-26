@@ -53,6 +53,9 @@ extern NSString *const AZReflectionMapperErrorDomain;
 - (BOOL) mapWithDictionary:(NSDictionary *)dictionary;
 - (BOOL) mapWithDictionary:(NSDictionary *)dictionary error:(NSError **)error;
 
+- (NSDictionary *) reverseDictionary;
+- (NSDictionary *) reverseDictionaryWithError:(NSError **) error;
+
 // Properties Methods
 + (NSDictionary *) classProperties;
 + (Class) classForProperty:(NSString *) propertyName;

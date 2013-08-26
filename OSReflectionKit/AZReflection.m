@@ -41,6 +41,7 @@ static inline void GetPropertyClassWrapperType(char *attributeCString, struct pr
 
 // ReflectionHintsMapper
 static inline void ParseMappingHint(NSString *mappingString, NSString **key, BOOL *usesTransformer, NSString **customClass);
+static inline void ParseReverseMappingHint(NSDictionary *mapping, NSString *propertyName, NSString **key, NSString **customClass, BOOL *usesTransformer);
 
 @end
 
@@ -141,6 +142,64 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
     BOOL success = (error == nil);
     
     return success;
+}
+
+- (NSDictionary *) dictionaryForObject:(id) instance error:(NSError **)error
+{
+	// Do we have any hints implemented?
+    Class classReference = [instance class];
+	NSDictionary *mapping = nil;
+	if ([(id)classReference respondsToSelector:@selector(reflectionMapping)])
+    {
+		mapping = [classReference reflectionMapping];
+	}
+
+    NSDictionary *classProperties = [classReference classProperties];
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:[classProperties count]];
+	// Now iterate through all key/value pairs
+	[classProperties enumerateKeysAndObjectsUsingBlock:^(NSString *propertyName, id propertyType, BOOL *stop) {
+        
+        id obj = [instance valueForKey:propertyName];
+        
+		// Due to language limitations we can't store nil in the dictionary,
+		// that's why obj-c uses artificial [NSNull null] to accomodate
+		if (obj == nil)
+        {
+			obj = [NSNull null];
+		}
+
+        // we might have a mapping function
+        NSString *customClassString = nil;
+        NSString *key = nil;
+        BOOL usesTransformer = NO;
+        ParseReverseMappingHint(mapping, propertyName, &key, &customClassString, &usesTransformer);
+        
+		if (key)
+        {
+            if(customClassString)
+            {
+                // Complex property
+                NSError *error = nil;
+                NSDictionary *subObject = [self dictionaryForObject:obj error:&error];
+                
+                if(subObject)
+                    [dictionary setObject:subObject forKey:key];
+                else
+                    NSLog(@"Error while serializing object: %@ : Error: %@", obj, [error localizedDescription]);
+            }
+            else
+            {        
+                [dictionary setObject:obj forKey:key];
+            }
+		}
+        else
+        {
+			// assign directly to the dictionary
+            [dictionary setObject:obj forKey:propertyName];
+		}
+	}];
+    
+    return [dictionary copy];
 }
 
 - (BOOL)assignValue:(id)value instance:(id)instance key:(NSString *)key propertyClass:(Class)propertyClass error:(NSError **)error
@@ -384,6 +443,37 @@ static inline void ParseMappingHint(NSString *mappingString, NSString **key, BOO
 	}
 }
 
+static inline void ParseReverseMappingHint(NSDictionary *mapping, NSString *propertyName, NSString **key, NSString **customClass, BOOL *usesTransformer)
+{
+    NSArray *keys = [mapping allKeys];
+    
+    for (NSString *mappingKey in keys)
+    {
+        NSString *mappingString = [mapping objectForKey:mappingKey];
+        NSArray *mappingHintArray = [mappingString componentsSeparatedByString:@","];
+        if([mappingHintArray containsObject:propertyName])
+        {
+            for (NSString *mappingHint in mappingHintArray)
+            {
+                if ([mappingHint isEqualToString:@"*"])
+                {
+                    *usesTransformer = YES;
+                }
+                else if ([mappingHint hasPrefix:@"<"])
+                {
+                    *customClass = [mappingHint substringWithRange:NSMakeRange(1, mappingHint.length-2)];
+                }
+                else if ([mappingHint isEqualToString:propertyName])
+                {
+                    *key = mappingKey;
+                }
+            }
+            break;
+        }
+
+    }
+}
+
 static inline NSError *ReflectionMapperError(NSString *errorMessage, ...)
 {
 	va_list arguments;	
@@ -517,7 +607,7 @@ static const char * getPropertyType(objc_property_t property) {
         {
             const char *propType = getPropertyType(property);
             NSString *propertyName = [NSString stringWithUTF8String:propName];
-            NSString *propertyType = [[NSString alloc] initWithCString:propType encoding:NSUTF16StringEncoding];
+            NSString *propertyType = [[NSString alloc] initWithCString:propType encoding:NSASCIIStringEncoding];
             if(propertyType)
                 [results setObject:propertyType forKey:propertyName];
         }
@@ -541,6 +631,16 @@ static const char * getPropertyType(objc_property_t property) {
 - (BOOL) mapWithDictionary:(NSDictionary *)dictionary error:(NSError **)error
 {
     return [[AZReflection sharedReflectionMapper] mapObject:self withDictionary:dictionary rootClass:[self class] error:error];
+}
+
+- (NSDictionary *)reverseDictionary
+{
+    return [self reverseDictionaryWithError:nil];
+}
+
+- (NSDictionary *) reverseDictionaryWithError:(NSError **) error
+{
+    return [[AZReflection sharedReflectionMapper] dictionaryForObject:self error:error];
 }
 
 + (Class) classForProperty:(NSString *) propertyName

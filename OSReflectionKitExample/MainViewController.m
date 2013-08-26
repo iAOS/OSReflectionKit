@@ -13,6 +13,7 @@ enum SEG_CONTROL_OPTIONS
 };
 
 #import "MainViewController.h"
+#import "FlipsideViewController.h"
 
 @interface MainViewController ()
 
@@ -57,8 +58,10 @@ enum SEG_CONTROL_OPTIONS
 {
     if ([[segue identifier] isEqualToString:@"VCProfileDetailsSegueID"])
     {
-        [[segue destinationViewController] setDelegate:self];
-        [[segue destinationViewController] setProfile:sender];
+        UINavigationController *nc = segue.destinationViewController;
+        FlipsideViewController *vc = (FlipsideViewController *)nc.topViewController;
+        [vc setDelegate:self];
+        [vc setProfile:sender];
         
         if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
         {

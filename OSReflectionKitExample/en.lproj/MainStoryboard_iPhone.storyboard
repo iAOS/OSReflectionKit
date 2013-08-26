@@ -70,23 +70,23 @@
                         <outlet property="navBar" destination="pn7-aS-qp5" id="1Rn-mN-QEZ"/>
                         <outlet property="segControlFileType" destination="HjO-P1-DEh" id="nsu-mE-ckR"/>
                         <outlet property="textView" destination="zeM-uQ-18i" id="VJq-xg-EoC"/>
-                        <segue destination="6" kind="modal" identifier="VCProfileDetailsSegueID" modalTransitionStyle="flipHorizontal" id="oM7-Yg-0kR"/>
+                        <segue destination="Vzz-ez-O3v" kind="modal" identifier="VCProfileDetailsSegueID" modalTransitionStyle="flipHorizontal" id="nRO-j3-dHW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-98" y="94"/>
         </scene>
-        <!--Flipside View Controller-->
+        <!--Flipside View Controller - Profile Loaded-->
         <scene sceneID="9">
             <objects>
                 <viewController id="6" customClass="FlipsideViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="7">
-                        <rect key="frame" x="0.0" y="20" width="320" height="548"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Kye-rr-cZz">
-                                <rect key="frame" x="0.0" y="44" width="320" height="504"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <prototypes>
@@ -140,32 +140,75 @@
                                     <outlet property="delegate" destination="6" id="jmC-J9-LWm"/>
                                 </connections>
                             </tableView>
-                            <navigationBar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="blackOpaque" id="12">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                <items>
-                                    <navigationItem title="Profile Loaded" id="13">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="14">
-                                            <connections>
-                                                <action selector="done:" destination="6" id="16"/>
-                                            </connections>
-                                        </barButtonItem>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
                         </subviews>
                         <color key="backgroundColor" white="0.25" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <navigationItem key="navigationItem" title="Profile Loaded" id="e2d-NO-AVc">
+                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="14">
+                            <connections>
+                                <action selector="done:" destination="6" id="16"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Reverse Dict" id="mmh-Zy-0aX">
+                            <connections>
+                                <segue destination="0ER-hy-dlc" kind="push" identifier="VCReverseDictSegueID" id="Vsn-ru-8li"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="378" y="94"/>
+            <point key="canvasLocation" x="900" y="94"/>
+        </scene>
+        <!--Reverse Dict View Controller - Reverse Dict-->
+        <scene sceneID="Qg8-Y9-XjK">
+            <objects>
+                <viewController id="0ER-hy-dlc" customClass="ReverseDictViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="bSR-X6-fQl">
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" id="fFx-TE-zps">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Reverse Dict" id="p6n-Rv-K4P"/>
+                    <connections>
+                        <outlet property="textView" destination="fFx-TE-zps" id="mcg-Iw-mgM"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="AGx-vg-n7J" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1444" y="94"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="eGb-i0-A11">
+            <objects>
+                <navigationController definesPresentationContext="YES" id="Vzz-ez-O3v" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="blackOpaque" id="Zmf-zC-VpW">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="6" kind="relationship" relationship="rootViewController" id="Gyi-yf-wSl"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Rqk-fy-Miv" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="388" y="94"/>
         </scene>
     </scenes>
     <classes>
         <class className="FlipsideViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/FlipsideViewController.h"/>
             <relationships>
+                <relationship kind="action" name="btReverseDictionaryTouched:"/>
                 <relationship kind="action" name="done:"/>
             </relationships>
         </class>
@@ -178,6 +221,12 @@
                 <relationship kind="outlet" name="btDismissKeyboard" candidateClass="UIBarButtonItem"/>
                 <relationship kind="outlet" name="navBar" candidateClass="UINavigationBar"/>
                 <relationship kind="outlet" name="segControlFileType" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="textView" candidateClass="UITextView"/>
+            </relationships>
+        </class>
+        <class className="ReverseDictViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ReverseDictViewController.h"/>
+            <relationships>
                 <relationship kind="outlet" name="textView" candidateClass="UITextView"/>
             </relationships>
         </class>
