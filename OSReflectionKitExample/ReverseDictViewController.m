@@ -7,6 +7,7 @@
 //
 
 #import "ReverseDictViewController.h"
+#import "NSObject+OSReflectionKit.h"
 
 @interface ReverseDictViewController ()
 
@@ -14,21 +15,12 @@
 
 @implementation ReverseDictViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
-    self.textView.text = [self.dictionary description];
+    self.textView.text = [[self.object reverseDictionary] description];
 }
 
 - (void)didReceiveMemoryWarning
@@ -37,8 +29,21 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewDidUnload {
+- (void)viewDidUnload
+{
     [self setTextView:nil];
     [super viewDidUnload];
+}
+
+#pragma mark - UI Actions
+
+- (IBAction)segmentedReverseTypeChanged:(id)sender
+{
+    UISegmentedControl *segControl = sender;
+    
+    if(segControl.selectedSegmentIndex == 0)
+        self.textView.text = [[self.object reverseDictionary] description];
+    else
+        self.textView.text = [self.object reverseJSONString];
 }
 @end

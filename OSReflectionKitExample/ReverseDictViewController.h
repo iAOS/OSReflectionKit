@@ -12,6 +12,7 @@
 
 @property (weak, nonatomic) IBOutlet UITextView *textView;
 
-@property (nonatomic, strong) NSDictionary *dictionary;
+@property (nonatomic, strong) id object;
 
+- (IBAction)segmentedReverseTypeChanged:(id)sender;
 @end

@@ -161,6 +161,17 @@
 - (NSString *) JSONString;
 
 /**
+ Converts the current instance object into a JSON String using the mapping dictionary for the object.
+ 
+ @discussion If a property is `nil`, an NSNull object will be created for it in the JSON string returned.
+ @param error The error variable to return an error object.
+ @return A `NSString` object formatted as JSON, with the values for the properties of the instance.
+ @see -dictionary
+ */
+- (NSString *) reverseJSONString:(NSError **) error;
+- (NSString *) reverseJSONString;
+
+/**
  Converts the current instance object into a JSON String.
  
  @param error The error variable to return an error object.

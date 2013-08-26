@@ -184,9 +184,9 @@
     return [_dic copy];
 }
 
-- (NSDictionary *) dictionaryWithDatesAsStrings
+- (NSDictionary *) dictionaryWithDatesAsStringsFromDict:(NSDictionary *) dict
 {
-    NSMutableDictionary *dictionary = [[self dictionary] mutableCopy];
+    NSMutableDictionary *dictionary = [dict mutableCopy];
     
     // In some cases, like for JSON, which does not accept date objects, we need to convert all NSDate objects to strings first
     NSArray *dateProperties = [[self class] propertyNamesOfType:[NSDate class]];
@@ -239,7 +239,22 @@
 
 - (NSString *)JSONString:(NSError **)error
 {
-    NSDictionary *dictionary = [self dictionaryWithDatesAsStrings];
+    NSDictionary *dictionary = [self dictionaryWithDatesAsStringsFromDict:[self dictionary]];
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:error];
+    NSString *resultAsString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
+    return resultAsString;
+}
+
+- (NSString *)reverseJSONString
+{
+    return [self reverseJSONString:nil];
+}
+
+- (NSString *)reverseJSONString:(NSError **)error
+{
+    NSDictionary *dictionary = [self dictionaryWithDatesAsStringsFromDict:[self reverseDictionaryWithError:error]];
     
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:error];
     NSString *resultAsString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];

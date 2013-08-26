@@ -56,7 +56,7 @@ enum SECTIONS
     {
         ReverseDictViewController *vc = segue.destinationViewController;
         
-        vc.dictionary = [self.profile reverseDictionary];
+        vc.object = self.profile;
     }
 }
 
