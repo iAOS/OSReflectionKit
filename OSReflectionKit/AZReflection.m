@@ -234,6 +234,9 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 			if (attributes.primitive && [value isKindOfClass:[NSValue class]]) {
 				// primitive values are expected to be wrapped into NSNumber or NSValue
 				[instance setValue:value forKey:key];
+			} else if (!value && attributes.primitive) {
+                // primitive values are expected to be wrapped into NSNumber or NSValue
+				[instance setValue:@0 forKey:key];
 			} else if (!value || [value isKindOfClass:attributes.classReference]) {
 				[instance setValue:value forKey:key];
 			} else if ([NSDate class] == attributes.classReference) {
