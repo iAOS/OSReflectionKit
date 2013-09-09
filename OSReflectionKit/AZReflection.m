@@ -249,14 +249,22 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
                     
                     [instance setValue:date forKey:key];
                 }
-                else
+                else if ([value isKindOfClass:[NSString class]])
                 {
+                    NSString *dateString = value;
+                    
                     if ([value length] == 10)
                         [formatter setDateFormat:@"yyyy-MM-dd"];
-                    else
+                    else if ([value length] <= 19)
                         [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+                    else
+                    {
+                        // Ruby on Rails compatibility for date formatted like: 2011-07-20T23:59:00-07:00
+                        dateString = [value stringByReplacingOccurrencesOfString:@":" withString:@""];
+                        [formatter setDateFormat:@"yyyy-MM-dd'T'HHmmssZZ"];
+                    }
                     
-                    [instance setValue:[formatter dateFromString:value] forKey:key];
+                    [instance setValue:[formatter dateFromString:dateString] forKey:key];
                 }
             
 			}
