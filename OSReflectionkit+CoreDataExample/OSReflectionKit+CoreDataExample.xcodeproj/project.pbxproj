@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A7322941899A04F00DEBBD7 /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7322931899A04F00DEBBD7 /* Event.m */; };
 		8AEDDE0A17B042F1003CF0BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEDDE0917B042F1003CF0BF /* UIKit.framework */; };
 		8AEDDE0C17B042F1003CF0BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEDDE0B17B042F1003CF0BF /* Foundation.framework */; };
 		8AEDDE0E17B042F1003CF0BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEDDE0D17B042F1003CF0BF /* CoreGraphics.framework */; };
@@ -21,13 +22,14 @@
 		8AEDDE8C17B05806003CF0BF /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AEDDE7917B05806003CF0BF /* DetailViewController.m */; };
 		8AEDDE8D17B05806003CF0BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8AEDDE7B17B05806003CF0BF /* InfoPlist.strings */; };
 		8AEDDE8E17B05806003CF0BF /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AEDDE7D17B05806003CF0BF /* MainStoryboard.storyboard */; };
-		8AEDDE8F17B05806003CF0BF /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AEDDE8017B05806003CF0BF /* Event.m */; };
 		8AEDDE9017B05806003CF0BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AEDDE8117B05806003CF0BF /* main.m */; };
 		8AEDDE9117B05806003CF0BF /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AEDDE8317B05806003CF0BF /* MasterViewController.m */; };
 		8AEDDE9317B05806003CF0BF /* OSReflectionKit+CoreDataExample.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8AEDDE8617B05806003CF0BF /* OSReflectionKit+CoreDataExample.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8A7322921899A04F00DEBBD7 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
+		8A7322931899A04F00DEBBD7 /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
 		8AEDDE0617B042F1003CF0BF /* OSReflectionKit+CoreDataExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "OSReflectionKit+CoreDataExample.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AEDDE0917B042F1003CF0BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8AEDDE0B17B042F1003CF0BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -49,8 +51,6 @@
 		8AEDDE7917B05806003CF0BF /* DetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
 		8AEDDE7C17B05806003CF0BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
 		8AEDDE7E17B05806003CF0BF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
-		8AEDDE7F17B05806003CF0BF /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
-		8AEDDE8017B05806003CF0BF /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
 		8AEDDE8117B05806003CF0BF /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8AEDDE8217B05806003CF0BF /* MasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MasterViewController.h; sourceTree = "<group>"; };
 		8AEDDE8317B05806003CF0BF /* MasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
@@ -147,13 +147,13 @@
 				8AEDDE7717B05806003CF0BF /* Default@2x.png */,
 				8AEDDE7817B05806003CF0BF /* DetailViewController.h */,
 				8AEDDE7917B05806003CF0BF /* DetailViewController.m */,
-				8AEDDE7F17B05806003CF0BF /* Event.h */,
-				8AEDDE8017B05806003CF0BF /* Event.m */,
 				8AEDDE8117B05806003CF0BF /* main.m */,
 				8AEDDE8217B05806003CF0BF /* MasterViewController.h */,
 				8AEDDE8317B05806003CF0BF /* MasterViewController.m */,
 				8AEDDE8417B05806003CF0BF /* OSReflectionKit+CoreDataExample-Info.plist */,
 				8AEDDE8517B05806003CF0BF /* OSReflectionKit+CoreDataExample-Prefix.pch */,
+				8A7322921899A04F00DEBBD7 /* Event.h */,
+				8A7322931899A04F00DEBBD7 /* Event.m */,
 				8AEDDE8617B05806003CF0BF /* OSReflectionKit+CoreDataExample.xcdatamodeld */,
 			);
 			name = "OSReflectionKit+CoreDataExample";
@@ -228,9 +228,9 @@
 				8AEDDE4C17B054E9003CF0BF /* AZReflection.m in Sources */,
 				8AEDDE4D17B054E9003CF0BF /* NSObject+OSReflectionKit.m in Sources */,
 				8AEDDE4E17B054E9003CF0BF /* NSManagedObject+OSReflectionKit.m in Sources */,
+				8A7322941899A04F00DEBBD7 /* Event.m in Sources */,
 				8AEDDE8817B05806003CF0BF /* AppDelegate.m in Sources */,
 				8AEDDE8C17B05806003CF0BF /* DetailViewController.m in Sources */,
-				8AEDDE8F17B05806003CF0BF /* Event.m in Sources */,
 				8AEDDE9017B05806003CF0BF /* main.m in Sources */,
 				8AEDDE9117B05806003CF0BF /* MasterViewController.m in Sources */,
 				8AEDDE9317B05806003CF0BF /* OSReflectionKit+CoreDataExample.xcdatamodeld in Sources */,

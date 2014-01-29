@@ -41,18 +41,17 @@
 - (void)insertNewObject:(id)sender
 {
     NSDate *date = [NSDate date];
-    
+    NSInteger eventId = [[self.fetchedResultsController fetchedObjects] count] + 1;
     // Create the object from a NSDictionary object
-    Event *newManagedObject = [Event objectFromDictionary:@{@"timeStamp" : date} withController:[self fetchedResultsController]];
+    Event *newManagedObject = [Event objectFromDictionary:@{@"timeStamp" : date, @"eventId":@(eventId)} inManagedObjectContext:self.fetchedResultsController.managedObjectContext];
     
     // Save the context.
     NSError *error = nil;
-    if (![newManagedObject saveWithContext:[[self fetchedResultsController] managedObjectContext] error:&error])
+    if (![newManagedObject saveWithError:&error])
     {
          // Replace this implementation with code to handle the error appropriately.
          // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
     }
 }
 

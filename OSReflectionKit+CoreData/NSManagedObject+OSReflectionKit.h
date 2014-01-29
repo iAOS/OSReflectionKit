@@ -35,6 +35,26 @@
 
 @interface NSManagedObject (OSReflectionKit)
 
+#pragma mark - Properties
+
+///-----------------------------
+/// @name Class Properties
+///-----------------------------
+
+/**
+ @return The name of the entity. By the default it returns the Class name.
+*/
++ (NSString *) entityName;
+
+/**
+ @return An array of unique field names that will be used by the instanciation methods to ensure uniqueness.
+         By default it returns nil.
+ */
+
++ (NSArray *) uniqueFields;
+
+#pragma mark - Instantiation Methods
+
 ///-----------------------------
 /// @name Instantiation Methods
 ///-----------------------------
@@ -45,7 +65,7 @@
  @return The instance of the created object
  @see -objectFromDictionary:
  */
-+ (instancetype) objectWithController:(NSFetchedResultsController *) controller;
++ (instancetype) objectWithController:(NSFetchedResultsController *) controller __deprecated;
 
 /**
  Creates an instance from the type of the calling class and sets its properties from a `NSDictionay` object.
@@ -55,16 +75,57 @@
  @discussion If you have a class that has a property: `NSString` *name, then you can call [CustomClassName objectFromDictionay:@{@"name" : @"Alexandre Santos"}] and it will return an object of the type 'CustomClassName' with the attribute 'name' containing the value 'Alexandre Santos'.
  @see -object
  */
-+ (instancetype) objectFromDictionary:(NSDictionary *) dictionary withController:(NSFetchedResultsController *) controller;
++ (instancetype) objectFromDictionary:(NSDictionary *) dictionary withController:(NSFetchedResultsController *) controller __deprecated;
 
 /**
  Creates a `NSArray` instance from the type of the calling class and sets its properties from an array of `NSDictionay` objects.
  
  @param dicts An array of `NSDictionary` objects containing the objects data.
  @return An array of objects from the calling class type.
+ @discussion Please use `+objectsFromDicts:`
  @see -objectFromDictionary:
  */
-+ (NSArray *) objectsFromDicts:(NSArray *) dicts withController:(NSFetchedResultsController *) controller;
++ (NSArray *) objectsFromDicts:(NSArray *) dicts withController:(NSFetchedResultsController *) controller __deprecated;
+
+/**
+ Creates an instance from the type of the calling class.
+ 
+ @param context The context where to create the object
+ @return The instance of the created object
+ @discussion This method does the same thing as `objectWithInManagedObjectContext:forEntityName:` using the method `entityName`.
+ @see -objectFromDictionary:
+ */
++ (instancetype) objectFromDictionary:(NSDictionary *) dictionary inManagedObjectContext:(NSManagedObjectContext *) context;
+
+/**
+ Creates an instance from the type of the calling class.
+ 
+ @param context The context where to create the object
+ @return The instance of the created object
+ @discussion This method does the same thing as `objectWithInManagedObjectContext:forEntityName:` using the method `entityName`.
+ @see -objectFromDictionary:
+ */
++ (instancetype) objectFromDictionary:(NSDictionary *) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName;
+
+/**
+ Creates an instance from the type of the calling class.
+ 
+ @param context The context where to create the object
+ @return The instance of the created object
+ @discussion This method does the same thing as `objectWithInManagedObjectContext:forEntityName:` using the `+entityName` method.
+ @see -objectFromDictionary:
+ */
++ (instancetype) objectWithInManagedObjectContext:(NSManagedObjectContext *) context;
+
+/**
+ Creates an instance from the type of the calling class.
+ 
+ @param context The context where to create the object
+ @param entityName The name of an entity.
+ @return The instance of the created object
+ @see -objectFromDictionary:
+ */
++ (instancetype) objectWithInManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName;
 
 /**
  Creates an instance from the type of the calling class and sets its properties from a string containing a JSON object.
@@ -94,7 +155,38 @@
 /// @name Persistence Methods
 ///-----------------------------
 
+/**
+ Save the current object to its managed object context.
+ 
+ @return `YES` in case of success.
+ */
+- (BOOL) save;
+
+/**
+ Save the current object to the specified managed object context.
+ 
+ @param context The managed object context to save the object.
+ @return `YES` in case of success.
+ @see -save
+ */
 - (BOOL) saveWithContext:(NSManagedObjectContext *) context;
+
+/**
+ Save the current object to the specified managed object context.
+
+ @param error The reference to be filled in case of an unsuccessful operation.
+ @return `YES` in case of success.
+ @see -save
+ */
+- (BOOL) saveWithError:(NSError **) error;
+
+/**
+ @param context The managed object context to save the object.
+ @param error The reference to be filled in case of an unsuccessful operation.
+ @return `YES` in case of success.
+ @see -save
+ @see -saveWithContext:
+ */
 - (BOOL) saveWithContext:(NSManagedObjectContext *) context error:(NSError **) error;
 
 @end

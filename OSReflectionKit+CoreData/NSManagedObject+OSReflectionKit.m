@@ -10,16 +10,100 @@
 
 @implementation NSManagedObject (OSReflectionKit)
 
+#pragma mark - Class Properties
+
++ (NSString *)entityName
+{
+    return NSStringFromClass([self class]);
+}
+
++ (NSArray *)uniqueFields
+{
+    return nil;
+}
+
 #pragma mark - Instanciation Methods
+
++ (instancetype) objectWithInManagedObjectContext:(NSManagedObjectContext *) context
+{
+    return [self objectWithInManagedObjectContext:context forEntityName:[self entityName]];
+}
+
++ (instancetype) objectWithInManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName
+{
+    return [self objectFromDictionary:nil inManagedObjectContext:context forEntityName:entityName];
+}
+
++ (instancetype) objectFromDictionary:(NSDictionary *) dictionary inManagedObjectContext:(NSManagedObjectContext *) context
+{
+    return [self objectFromDictionary:dictionary inManagedObjectContext:context forEntityName:[self entityName]];
+}
+
++ (instancetype) objectFromDictionary:(NSDictionary *) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName
+{
+    // Check if the dictionary is not stored yet
+    id object = [self firstWithDictionary:dictionary inManagedObjectContext:context forEntityName:entityName];
+
+    if(object == nil)
+    {
+        // Create a new object since there is no one like
+        object = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
+    }
+    
+    // Try to map the object if there is any dictionary data
+    if([dictionary count] > 0)
+    {
+        NSError *error = nil;
+        [object mapWithDictionary:dictionary error:&error];
+        
+        if(error)
+            NSLog(@"Error mapping object: %@", error);
+    }
+    
+    return object;
+}
+
+#pragma mark - Fetcher Helpers
+
++ (instancetype) firstWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName
+{
+    id object = nil;
+    NSArray *objects = [self fetchUniqueObjectsWithDictionary:dictionary inManagedObjectContext:context forEntityName:entityName];
+    if ([objects count] > 0)
+    {
+        object = [objects firstObject];
+    }
+    
+    return object;
+}
+
++ (NSArray *) fetchUniqueObjectsWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName
+{
+    NSArray *uniqueFields = [self uniqueFields];
+    
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entityName];
+    
+    if([uniqueFields count] > 0)
+    {
+        NSMutableString *predicateFormat = [[uniqueFields componentsJoinedByString:@" = '%@' &&"] mutableCopy];
+        [predicateFormat appendString:@" = '%@'"];
+        NSArray *values = [dictionary valuesForPropertyNames:uniqueFields];
+        
+        request.predicate = [NSPredicate predicateWithFormat:predicateFormat argumentArray:values];
+    }
+    
+    NSError *error = nil;
+    NSArray *objects = [context executeFetchRequest:request error:&error];
+    
+    return objects;
+}
+
+
+#pragma mark - Deprecated methods
 
 + (instancetype) objectWithController:(NSFetchedResultsController *) controller
 {
-    NSManagedObjectContext *context = [controller managedObjectContext];
-    NSEntityDescription *entity = [[controller fetchRequest] entity];
-    
-    id newManagedObject = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:context];
-    
-    return newManagedObject;
+    return [self objectWithInManagedObjectContext:[controller managedObjectContext] forEntityName:[[[controller fetchRequest] entity] name]];
 }
 
 + (instancetype) objectFromDictionary:(NSDictionary *) dictionary withController:(NSFetchedResultsController *) controller
@@ -101,9 +185,19 @@
 
 #pragma mark - Persistence Methods
 
+- (BOOL)save
+{
+    return [self saveWithContext:self.managedObjectContext];
+}
+
 - (BOOL) saveWithContext:(NSManagedObjectContext *) context
 {
     return [self saveWithContext:context error:nil];
+}
+
+- (BOOL)saveWithError:(NSError **)error
+{
+    return [self saveWithContext:self.managedObjectContext error:error];
 }
 
 - (BOOL) saveWithContext:(NSManagedObjectContext *) context error:(NSError **) error

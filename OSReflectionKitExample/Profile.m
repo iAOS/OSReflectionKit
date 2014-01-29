@@ -42,12 +42,35 @@
     return @{@"id" : @"profileId",
              @"first_name" : @"firstName",
              @"last_name" : @"lastName",
-             @"address" : @"address,<Address>" // The <> indicates the class name of the complex property
+             @"address" : @"address,<Address>", // The <> indicates the class name of the complex property
+             @"hobbies": @"*"
              };
 }
 
 - (void)reflectionTranformsValue:(id)value forKey:(NSString *)propertyName
 {
+    if([propertyName isEqualToString:@"hobbies"])
+    {
+        self.hobbies = @[@"testing", @"hey"];
+    }
+}
+
+- (NSDictionary *)dictionary
+{
+    NSMutableDictionary *dict = [[super dictionary] mutableCopy];
+    
+    [dict removeObjectForKey:@"hobbies"];
+    
+    return dict;
+}
+
+- (NSDictionary *)reverseDictionary
+{
+    NSMutableDictionary *dict = [[super reverseDictionary] mutableCopy];
+    
+    [dict removeObjectForKey:@"hobbies"];
+    
+    return dict;
 }
 
 @end
