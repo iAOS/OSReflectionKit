@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Event.h"
+#import "Event+ReflectionKitOptions.h"
 
 @interface DetailViewController : UIViewController
 

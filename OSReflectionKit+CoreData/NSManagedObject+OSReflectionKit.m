@@ -7,8 +7,11 @@
 //
 
 #import "NSManagedObject+OSReflectionKit.h"
+#import "NSPredicate+OSReflectionKit.h"
 
 @implementation NSManagedObject (OSReflectionKit)
+
+static NSManagedObjectContext *_defaultContext = nil;
 
 #pragma mark - Class Properties
 
@@ -22,17 +25,78 @@
     return nil;
 }
 
-#pragma mark - Instanciation Methods
-
-+ (instancetype) objectWithInManagedObjectContext:(NSManagedObjectContext *) context
++ (NSArray *) autoincrementFields
 {
-    return [self objectWithInManagedObjectContext:context forEntityName:[self entityName]];
+    return nil;
 }
 
-+ (instancetype) objectWithInManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName
++ (void) registerDefaultManagedObjectContext:(NSManagedObjectContext *) context
+{
+    @synchronized(self)
+    {
+        _defaultContext = context;
+    }
+}
+
++ (NSManagedObjectContext *) defaultManagedObjectContext
+{
+    @synchronized(self)
+    {
+        return _defaultContext;
+    }
+}
+
++ (NSEntityDescription *)entityDescription
+{
+    return [NSEntityDescription entityForName:[self entityName] inManagedObjectContext:[self defaultManagedObjectContext]];
+}
+
+#pragma mark - Instance Properties
+
+- (BOOL) isSaved
+{
+    return ![self isNew];
+}
+
+- (BOOL) isNew
+{
+    NSDictionary *vals = [self committedValuesForKeys:nil];
+    return [vals count] == 0;
+}
+
+- (BOOL) hasBeenDeleted
+{
+    NSManagedObject *managedObjectClone = [[self managedObjectContext] existingObjectWithID:[self objectID] error:nil];
+    return (managedObjectClone == nil);
+}
+
+#pragma mark - Instanciation Methods
+
++ (instancetype)objectFromDictionary:(NSDictionary *)dictionary
+{
+    NSAssert([self defaultManagedObjectContext], @"Please register the default managed object context for class: '%@' before using '%s'.", NSStringFromClass([self class]), __PRETTY_FUNCTION__);
+    
+    return [self objectFromDictionary:dictionary inManagedObjectContext:[self defaultManagedObjectContext]];
+}
+
++ (instancetype)objectFromJSON:(NSString *)jsonString
+{
+    NSAssert([self defaultManagedObjectContext], @"Please register the default managed object context for class: '%@' before using '%s'.", NSStringFromClass([self class]), __PRETTY_FUNCTION__);
+    
+    return [self objectFromJSON:jsonString inManagedObjectContext:[self defaultManagedObjectContext]];
+}
+
++ (instancetype) objectInManagedObjectContext:(NSManagedObjectContext *) context
+{
+    return [self objectInManagedObjectContext:context forEntityName:[self entityName]];
+}
+
++ (instancetype) objectInManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName
 {
     return [self objectFromDictionary:nil inManagedObjectContext:context forEntityName:entityName];
 }
+
+#pragma mark NSDictionary
 
 + (instancetype) objectFromDictionary:(NSDictionary *) dictionary inManagedObjectContext:(NSManagedObjectContext *) context
 {
@@ -63,12 +127,129 @@
     return object;
 }
 
++ (NSArray *) objectsFromDicts:(NSArray *) dicts inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName
+{
+    NSMutableArray *objects = [NSMutableArray arrayWithCapacity:[dicts count]];
+    for (NSDictionary *dict in dicts)
+    {
+        id obj = [self objectFromDictionary:dict inManagedObjectContext:context forEntityName:entityName];
+        
+        if(obj)
+            [objects addObject:obj];
+    }
+    
+    return [objects copy];
+}
+
++ (NSArray *) objectsFromDicts:(NSArray *) dicts inManagedObjectContext:(NSManagedObjectContext *) context
+{
+    return [self objectsFromDicts:dicts inManagedObjectContext:context forEntityName:[self entityName]];
+}
+
+#pragma mark JSON
+
++ (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName error:(NSError **) error
+{
+    // Convert the JSON text into a dictionary object
+    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:error];
+    if(dictionary == nil)
+    {
+        // Something is wrong with the JSON text
+        NSLog(@"Invalid json data: %@", *error);
+        return nil;
+    }
+    else if([dictionary isKindOfClass:[NSDictionary class]])
+    {
+        // Load the Profile object from the dictionary
+        return [self objectFromDictionary:dictionary inManagedObjectContext:context forEntityName:entityName];
+    }
+    
+    return nil;
+}
+
++ (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName
+{
+    return [self objectFromJSON:jsonString inManagedObjectContext:context forEntityName:entityName error:nil];
+}
+
++ (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context
+{
+    return [self objectFromJSON:jsonString inManagedObjectContext:context forEntityName:[self entityName] error:nil];
+}
+
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName error:(NSError **) error
+{
+    // Convert the JSON text into a dictionary object
+    NSData *jsonData = [jsonArray dataUsingEncoding:NSUTF8StringEncoding];
+    NSArray *arrayDicts = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:error];
+    if(arrayDicts == nil)
+    {
+        // Something is wrong with the JSON text
+        NSLog(@"Invalid json data: %@", *error);
+        return nil;
+    }
+    else if([arrayDicts isKindOfClass:[NSArray class]])
+    {
+        // Load the Profile object from the dictionary
+        return [self objectsFromDicts:arrayDicts inManagedObjectContext:context forEntityName:entityName];
+    }
+    
+    return nil;
+}
+
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName
+{
+    return [self objectsFromJSONArray:jsonArray inManagedObjectContext:context forEntityName:entityName error:nil];
+}
+
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context
+{
+    return [self objectsFromJSONArray:jsonArray inManagedObjectContext:context forEntityName:[self entityName] error:nil];
+}
+
 #pragma mark - Fetcher Helpers
+
++ (NSUInteger) count
+{
+    NSAssert([self defaultManagedObjectContext], @"Please register the default managed object context for class: '%@' before using '%s'.", NSStringFromClass([self class]), __PRETTY_FUNCTION__);
+    return [self countInManagedObjectContext:[self defaultManagedObjectContext] forEntityName:[self entityName] withPredicate:nil];
+}
+
++ (NSUInteger) countInManagedObjectContext:(NSManagedObjectContext *) context
+{
+    return [self countInManagedObjectContext:context forEntityName:[self entityName] withPredicate:nil];
+}
+
++ (NSUInteger) countInManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName withPredicate:(NSPredicate *) predicate
+{
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:entityName];
+
+    if(predicate)
+        fetchRequest.predicate = predicate;
+    
+    NSError *error = nil;
+    
+    NSUInteger count = [context countForFetchRequest:fetchRequest error:&error];
+    
+    if(error)
+    {
+        NSLog(@"%@", error);
+    }
+    
+    return count;
+}
+
++ (NSUInteger) countUniqueObjectsWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName limit:(NSUInteger) limit
+{
+    NSPredicate *predicate = [NSPredicate predicateForUniqueness:[self class] withDictionary:dictionary];
+    return [self countInManagedObjectContext:context forEntityName:entityName withPredicate:predicate];
+}
 
 + (instancetype) firstWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName
 {
     id object = nil;
-    NSArray *objects = [self fetchUniqueObjectsWithDictionary:dictionary inManagedObjectContext:context forEntityName:entityName];
+    NSArray *objects = [self fetchUniqueObjectsWithDictionary:dictionary inManagedObjectContext:context forEntityName:entityName limit:1];
     if ([objects count] > 0)
     {
         object = [objects firstObject];
@@ -77,23 +258,52 @@
     return object;
 }
 
-+ (NSArray *) fetchUniqueObjectsWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName
++ (NSArray *) fetchUniqueObjectsWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName limit:(NSUInteger) limit
 {
-    NSArray *uniqueFields = [self uniqueFields];
-    
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entityName];
-    
-    if([uniqueFields count] > 0)
+    NSArray *objects = nil;
+
+    if([dictionary count] > 0)
     {
-        NSMutableString *predicateFormat = [[uniqueFields componentsJoinedByString:@" = '%@' &&"] mutableCopy];
-        [predicateFormat appendString:@" = '%@'"];
-        NSArray *values = [dictionary valuesForPropertyNames:uniqueFields];
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entityName];
         
-        request.predicate = [NSPredicate predicateWithFormat:predicateFormat argumentArray:values];
+        if(limit > 0)
+        {
+            request.fetchLimit = limit;
+        }
+        
+        NSPredicate *predicate = [NSPredicate predicateForUniqueness:[self class] withDictionary:dictionary];
+        if(predicate)
+        {
+            request.predicate = predicate;
+        }
+        
+        NSError *error = nil;
+        objects = [context executeFetchRequest:request error:&error];
+    }
+    
+    return objects;
+}
+
++ (NSArray *) fetchWithPredicate:(NSPredicate *) predicate limit:(NSUInteger) limit
+{
+    NSAssert([self defaultManagedObjectContext], @"Please register the default managed object context for class: '%@' before using '%s'.", NSStringFromClass([self class]), __PRETTY_FUNCTION__);
+    
+    NSArray *objects = nil;
+    
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:[self entityName]];
+    
+    if(limit > 0)
+    {
+        request.fetchLimit = limit;
+    }
+
+    if(predicate)
+    {
+        request.predicate = predicate;
     }
     
     NSError *error = nil;
-    NSArray *objects = [context executeFetchRequest:request error:&error];
+    objects = [[self defaultManagedObjectContext] executeFetchRequest:request error:&error];
     
     return objects;
 }
@@ -103,7 +313,7 @@
 
 + (instancetype) objectWithController:(NSFetchedResultsController *) controller
 {
-    return [self objectWithInManagedObjectContext:[controller managedObjectContext] forEntityName:[[[controller fetchRequest] entity] name]];
+    return [self objectInManagedObjectContext:[controller managedObjectContext] forEntityName:[[[controller fetchRequest] entity] name]];
 }
 
 + (instancetype) objectFromDictionary:(NSDictionary *) dictionary withController:(NSFetchedResultsController *) controller

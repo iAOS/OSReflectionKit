@@ -41,6 +41,13 @@
 /// @name Class Properties
 ///-----------------------------
 
++ (void) registerDefaultManagedObjectContext:(NSManagedObjectContext *) context;
++ (NSManagedObjectContext *) defaultManagedObjectContext;
+
+/**
+ @discussion Override these methods in order to customize your managed object.
+*/
+
 /**
  @return The name of the entity. By the default it returns the Class name.
 */
@@ -50,8 +57,23 @@
  @return An array of unique field names that will be used by the instanciation methods to ensure uniqueness.
          By default it returns nil.
  */
-
 + (NSArray *) uniqueFields;
+
+/**
+ @return An array of field names that will be auto incremented by the instanciation methods if not present in the dictionary.
+ By default it returns nil.
+ */
++ (NSArray *) autoincrementFields;
+
++ (NSEntityDescription *) entityDescription;
+
+///-----------------------------
+/// @name Instance Properties
+///-----------------------------
+
+- (BOOL) isSaved;
+- (BOOL) isNew;
+- (BOOL) hasBeenDeleted;
 
 #pragma mark - Instantiation Methods
 
@@ -82,10 +104,21 @@
  
  @param dicts An array of `NSDictionary` objects containing the objects data.
  @return An array of objects from the calling class type.
- @discussion Please use `+objectsFromDicts:`
+ @deprecated Please use `objectsFromDicts:inManagedObjectContext` instead.
  @see -objectFromDictionary:
  */
 + (NSArray *) objectsFromDicts:(NSArray *) dicts withController:(NSFetchedResultsController *) controller __deprecated;
+
+/**
+ Creates a `NSArray` instance from the type of the calling class and sets its properties from an array of `NSDictionay` objects.
+ 
+ @param dicts An array of `NSDictionary` objects containing the objects data.
+ @return An array of objects from the calling class type.
+ @discussion Please use `+objectsFromDicts:`
+ @see -objectFromDictionary:
+ */
++ (NSArray *) objectsFromDicts:(NSArray *) dicts inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName;
++ (NSArray *) objectsFromDicts:(NSArray *) dicts inManagedObjectContext:(NSManagedObjectContext *) context;
 
 /**
  Creates an instance from the type of the calling class.
@@ -115,7 +148,7 @@
  @discussion This method does the same thing as `objectWithInManagedObjectContext:forEntityName:` using the `+entityName` method.
  @see -objectFromDictionary:
  */
-+ (instancetype) objectWithInManagedObjectContext:(NSManagedObjectContext *) context;
++ (instancetype) objectInManagedObjectContext:(NSManagedObjectContext *) context;
 
 /**
  Creates an instance from the type of the calling class.
@@ -125,7 +158,7 @@
  @return The instance of the created object
  @see -objectFromDictionary:
  */
-+ (instancetype) objectWithInManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName;
++ (instancetype) objectInManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName;
 
 /**
  Creates an instance from the type of the calling class and sets its properties from a string containing a JSON object.
@@ -137,8 +170,12 @@
  @discussion If you have a class that has a property: `NSString` *name, then you can call [CustomClassName objectFromJSON:@"{"name" : "Alexandre Santos"}"] and it will return an object of the type 'CustomClassName' with the attribute 'name' containing the value 'Alexandre Santos'.
  @see -objectFromDictionary:
  */
-+ (instancetype) objectFromJSON:(NSString *) jsonString withController:(NSFetchedResultsController *) controller error:(NSError **) error;
-+ (instancetype) objectFromJSON:(NSString *) jsonString withController:(NSFetchedResultsController *) controller;
++ (instancetype) objectFromJSON:(NSString *) jsonString withController:(NSFetchedResultsController *) controller error:(NSError **) error __deprecated;
++ (instancetype) objectFromJSON:(NSString *) jsonString withController:(NSFetchedResultsController *) controller __deprecated;
+
++ (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName error:(NSError **) error;
++ (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName;
++ (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context;
 
 /**
  Creates a `NSArray` instance from the type of the calling class and sets its properties from an array of JSON objects.
@@ -148,8 +185,33 @@
  @return An array of objects from the calling class type.
  @see -objectFromJSON:
  */
-+ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray withController:(NSFetchedResultsController *) controller error:(NSError **) error;;
-+ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray withController:(NSFetchedResultsController *) controller;
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray withController:(NSFetchedResultsController *) controller error:(NSError **) error __deprecated;
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray withController:(NSFetchedResultsController *) controller __deprecated;
+
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName error:(NSError **) error;
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName ;
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context;
+
+#pragma mark - Fetcher Helpers
+
+///-----------------------------
+/// @name Fetcher Methods
+///-----------------------------
+
++ (NSUInteger) count;
++ (NSUInteger) countInManagedObjectContext:(NSManagedObjectContext *) context;
+
++ (NSUInteger) countInManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName withPredicate:(NSPredicate *) predicate;
+
++ (NSUInteger) countUniqueObjectsWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName limit:(NSUInteger) limit;
+
++ (instancetype) firstWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName;
+
++ (NSArray *) fetchUniqueObjectsWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName limit:(NSUInteger) limit;
+
++ (NSArray *) fetchWithPredicate:(NSPredicate *) predicate limit:(NSUInteger) limit;
+
+#pragma mark - Persistence Methods
 
 ///-----------------------------
 /// @name Persistence Methods

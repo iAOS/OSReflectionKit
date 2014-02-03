@@ -1,5 +1,5 @@
 //
-//  Event.h
+//  NSPredicate+OSReflectionKit.h
 //  OSReflectionKit+CoreDataExample
 //
 //  Created by Alexandre on 03/02/14.
@@ -7,12 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
 
+@interface NSPredicate (OSReflectionKit)
 
-@interface Event : NSManagedObject
-
-@property (nonatomic, retain) NSDate * timeStamp;
-@property (nonatomic, retain) NSNumber * eventId;
++ (instancetype) predicateForUniqueness:(Class) klazz withDictionary:(NSDictionary *) dictionary;
 
 @end

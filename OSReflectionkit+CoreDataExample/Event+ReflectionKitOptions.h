@@ -1,5 +1,5 @@
 //
-//  Event.m
+//  Event+ReflectionKitOptions.h
 //  OSReflectionKit+CoreDataExample
 //
 //  Created by Alexandre on 03/02/14.
@@ -7,11 +7,8 @@
 //
 
 #import "Event.h"
+#import "NSManagedObject+OSReflectionKit.h"
 
-
-@implementation Event
-
-@dynamic timeStamp;
-@dynamic eventId;
+@interface Event (ReflectionKitOptions)
 
 @end

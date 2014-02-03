@@ -9,7 +9,8 @@
 #import "MasterViewController.h"
 
 #import "DetailViewController.h"
-#import "Event.h"
+#import "Event+ReflectionKitOptions.h"
+#import "OSCoreDataManager.h"
 
 @interface MasterViewController ()
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
@@ -27,7 +28,10 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
-
+    
+    // Register the defalt managed object context for the Event class
+    [Event registerDefaultManagedObjectContext:[OSCoreDataManager sharedManager].managedObjectContext];
+    
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
     self.navigationItem.rightBarButtonItem = addButton;
 }
@@ -41,13 +45,17 @@
 - (void)insertNewObject:(id)sender
 {
     NSDate *date = [NSDate date];
-    NSInteger eventId = [[self.fetchedResultsController fetchedObjects] count] + 1;
+    NSInteger eventId = [Event count];
     // Create the object from a NSDictionary object
-    Event *newManagedObject = [Event objectFromDictionary:@{@"timeStamp" : date, @"eventId":@(eventId)} inManagedObjectContext:self.fetchedResultsController.managedObjectContext];
+    Event *event = [Event objectFromDictionary:@{@"timeStamp" : date, @"eventId":@(eventId)}];
+    
+    NSLog(@"Is New: %d", [event isNew]);
+    NSLog(@"Is Saved: %d", [event isSaved]);
+    NSLog(@"Has been deleted: %d", [event hasBeenDeleted]);
     
     // Save the context.
     NSError *error = nil;
-    if (![newManagedObject saveWithError:&error])
+    if (![event saveWithError:&error])
     {
          // Replace this implementation with code to handle the error appropriately.
          // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
@@ -122,7 +130,7 @@
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     // Edit the entity name as appropriate.
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Event" inManagedObjectContext:self.managedObjectContext];
+    NSEntityDescription *entity = [Event entityDescription];
     [fetchRequest setEntity:entity];
     
     // Set the batch size to a suitable number.
@@ -136,7 +144,7 @@
     
     // Edit the section name key path and cache name if appropriate.
     // nil for section name key path means "no sections".
-    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"Master"];
+    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:[OSCoreDataManager sharedManager].managedObjectContext sectionNameKeyPath:nil cacheName:@"Master"];
     aFetchedResultsController.delegate = self;
     self.fetchedResultsController = aFetchedResultsController;
     
