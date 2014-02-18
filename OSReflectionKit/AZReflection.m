@@ -92,6 +92,8 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 
 - (BOOL) mapObject:(id) instance withDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference error:(NSError **)error
 {
+    __block BOOL success = YES;
+    
 	// Do we have any hints implemented?
 	NSDictionary *mapping = nil;
 	if ([(id)classReference respondsToSelector:@selector(reflectionMapping)])
@@ -119,6 +121,9 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
             {
                 // TODO: Automatically lower camelize the key and try again
                 //[self assignValue:obj instance:instance key:[key lowerCamelize] propertyClass:nil error:error];
+                success = NO;
+                
+                *stop = YES;
             }
 		}
         else
@@ -134,12 +139,14 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 			}
             else
             {
-				[self assignValue:obj instance:instance key:key propertyClass:NSClassFromString(customClassString) error:error];
+				if(![self assignValue:obj instance:instance key:key propertyClass:NSClassFromString(customClassString) error:error])
+                {
+                    success = NO;
+                    *stop = YES;
+                }
 			}
 		}
 	}];
-    
-    BOOL success = (error == nil);
     
     return success;
 }
@@ -219,15 +226,33 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 				[instance setValue:value forKey:key];								
 			}
 		} else if ([value isKindOfClass:[NSArray class]]) {
+            
 			if (propertyClass) {
 				// it's an array of custom classes
 				NSMutableArray *array = [NSMutableArray arrayWithCapacity:((NSArray *)value).count];
 				for (id subvalue in value) {
 					[array addObject:[self reflectionMapWithDictionary:subvalue rootClass:propertyClass error:error]];
 				}
-				[instance setValue:array forKey:key];				
+                
+                id objValue = array;
+                
+                // Convert the NSArray into NSSet according to the property type
+                if([[[instance class] classForProperty:key] isSubclassOfClass:[NSSet class]])
+                {
+                    objValue = [NSSet setWithArray:array];
+                }
+                
+				[instance setValue:objValue forKey:key];
 			} else {
-				[instance setValue:value forKey:key];				
+                id objValue = value;
+                
+                // Convert the NSArray into NSSet according to the property type
+                if([[[instance class] classForProperty:key] isSubclassOfClass:[NSSet class]])
+                {
+                    objValue = [NSSet setWithArray:value];
+                }
+                
+				[instance setValue:objValue forKey:key];
 			}
 		} else {
 			// check types 
@@ -526,81 +551,6 @@ static const char * getPropertyType(objc_property_t property) {
 
 @end
 
-@implementation AZReflection (Prefix)
-
-- (id)reflectionMapWithDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference error:(NSError **)error withPrefix:(NSString *) prefix
-{
-	if (!dictionary || ![dictionary isKindOfClass:[NSDictionary class]] || !classReference) {
-        if(error)
-            *error = ReflectionMapperError(@"Both map dictionary (%@) and root class (%@) must be not nil", dictionary, classReference);
-		return nil;
-	}
-    
-    if(prefix)
-    {
-        id instance = nil;
-        
-        BOOL classHasProtocolFactoryMethod = class_conformsToProtocol(classReference, @protocol(AZReflectionHint)) && [(id)classReference respondsToSelector:@selector(reflectionNewInstanceWithDictionary:)];
-        // Can we use class as instance factory?
-        if (classHasProtocolFactoryMethod) {
-            instance = [classReference reflectionNewInstanceWithDictionary:dictionary];
-        } else {
-            // Otherwise default to
-            instance = [[classReference alloc] init];
-        }
-        
-        if (!instance) {
-            // Failed to create instance, quit
-            if(error)
-                *error = ReflectionMapperError(@"Failed to create an instance of class %@%@", classReference, classHasProtocolFactoryMethod ? @". Class has a custom hint factory reflectionNewInstanceWithDictionary:" : @"");
-            return nil;
-        }
-        
-        // Do we have any hints implemented?
-        NSDictionary *mapping = nil;
-        if ([(id)classReference respondsToSelector:@selector(reflectionMapping)]) {
-            mapping = [classReference reflectionMapping];
-        }
-        
-        // Now iterate through all key/value pairs
-        [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id obj, BOOL *stop) {
-            // Due to language limitations we can't store nil in the dictionary,
-            // that's why obj-c uses artificial [NSNull null] to accomodate
-            
-            // Remove o prefixo
-            NSString *atributo = [key stringByReplacingOccurrencesOfString:prefix withString:@""];
-            
-            if (obj == [NSNull null]) {
-                obj = nil;
-            }
-            
-            if (!mapping || ![mapping valueForKey:key]) {
-                // assign directly to the instance
-                [self assignValue:obj instance:instance key:atributo propertyClass:nil error:error];
-            } else {
-                // we might have a mapping function
-                NSString *mappingHint = [mapping valueForKey:key];
-                BOOL usesTransformer = NO;
-                NSString *customClassString = nil;
-                ParseMappingHint(mappingHint, &key, &usesTransformer, &customClassString);
-                if (usesTransformer && [instance respondsToSelector:@selector(reflectionTranformsValue:forKey:)]) {
-                    [instance reflectionTranformsValue:obj forKey:atributo];
-                } else {
-                    [self assignValue:obj instance:instance key:atributo propertyClass:NSClassFromString(customClassString) error:error];
-                }
-            }
-        }];
-        
-        return instance;
-    }
-    else
-    {
-        return [self reflectionMapWithDictionary:dictionary rootClass:classReference error:error];
-    }
-}
-
-@end
-
 @implementation NSObject (AZReflectionMapper)
 
 + (NSDictionary *) classProperties
@@ -676,7 +626,7 @@ static const char * getPropertyType(objc_property_t property) {
 
 - (BOOL) setValue:(id) value forProperty:(NSString *) propertyName error:(NSError **) error
 {
-    return [[AZReflection sharedReflectionMapper] assignValue:value instance:self key:propertyName propertyClass:[NSObject classForProperty:propertyName] error:error];
+    return [[AZReflection sharedReflectionMapper] assignValue:value instance:self key:propertyName propertyClass:[[self class] classForProperty:propertyName] error:error];
 }
 
 @end

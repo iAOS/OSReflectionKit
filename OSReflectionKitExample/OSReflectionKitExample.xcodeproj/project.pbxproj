@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A94A08918B39A0A00534BCC /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A94A08818B39A0A00534BCC /* XCTest.framework */; };
+		8A94A08A18B39A0A00534BCC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC236F0C17AC908100D22D54 /* Foundation.framework */; };
+		8A94A08B18B39A0A00534BCC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC236F0A17AC908100D22D54 /* UIKit.framework */; };
+		8A94A09118B39A0A00534BCC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8A94A08F18B39A0A00534BCC /* InfoPlist.strings */; };
+		8A94A09318B39A0A00534BCC /* OSReflectionKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A94A09218B39A0A00534BCC /* OSReflectionKitTests.m */; };
+		8A94A09B18B39A5E00534BCC /* AZReflectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A94A09A18B39A5E00534BCC /* AZReflectionTests.m */; };
+		8A94A0A018B3A49300534BCC /* TestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A94A09F18B3A49300534BCC /* TestModel.m */; };
 		AC236F0B17AC908100D22D54 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC236F0A17AC908100D22D54 /* UIKit.framework */; };
 		AC236F0D17AC908100D22D54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC236F0C17AC908100D22D54 /* Foundation.framework */; };
 		AC236F3D17AC92FC00D22D54 /* AZReflection.m in Sources */ = {isa = PBXBuildFile; fileRef = AC236F3517AC92FC00D22D54 /* AZReflection.m */; };
@@ -26,7 +33,26 @@
 		AC9E755C17CA96FB0074B9F9 /* ReverseDictViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC9E755B17CA96FB0074B9F9 /* ReverseDictViewController.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		8A94A09518B39A0A00534BCC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AC236EFF17AC908100D22D54 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AC236F0617AC908100D22D54;
+			remoteInfo = OSReflectionKitExample;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		8A94A08718B39A0A00534BCC /* OSReflectionKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OSReflectionKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A94A08818B39A0A00534BCC /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		8A94A08E18B39A0A00534BCC /* OSReflectionKitTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OSReflectionKitTests-Info.plist"; sourceTree = "<group>"; };
+		8A94A09018B39A0A00534BCC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8A94A09218B39A0A00534BCC /* OSReflectionKitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OSReflectionKitTests.m; sourceTree = "<group>"; };
+		8A94A09418B39A0A00534BCC /* OSReflectionKitTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OSReflectionKitTests-Prefix.pch"; sourceTree = "<group>"; };
+		8A94A09A18B39A5E00534BCC /* AZReflectionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AZReflectionTests.m; sourceTree = "<group>"; };
+		8A94A09E18B3A49300534BCC /* TestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestModel.h; sourceTree = "<group>"; };
+		8A94A09F18B3A49300534BCC /* TestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestModel.m; sourceTree = "<group>"; };
 		AC236F0717AC908100D22D54 /* OSReflectionKitExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OSReflectionKitExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC236F0A17AC908100D22D54 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		AC236F0C17AC908100D22D54 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -59,6 +85,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		8A94A08418B39A0A00534BCC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A94A08918B39A0A00534BCC /* XCTest.framework in Frameworks */,
+				8A94A08B18B39A0A00534BCC /* UIKit.framework in Frameworks */,
+				8A94A08A18B39A0A00534BCC /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC236F0417AC908100D22D54 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -71,11 +107,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8A94A08C18B39A0A00534BCC /* OSReflectionKitTests */ = {
+			isa = PBXGroup;
+			children = (
+				8A94A09E18B3A49300534BCC /* TestModel.h */,
+				8A94A09F18B3A49300534BCC /* TestModel.m */,
+				8A94A09A18B39A5E00534BCC /* AZReflectionTests.m */,
+				8A94A09218B39A0A00534BCC /* OSReflectionKitTests.m */,
+				8A94A08D18B39A0A00534BCC /* Supporting Files */,
+			);
+			path = OSReflectionKitTests;
+			sourceTree = "<group>";
+		};
+		8A94A08D18B39A0A00534BCC /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8A94A08E18B39A0A00534BCC /* OSReflectionKitTests-Info.plist */,
+				8A94A08F18B39A0A00534BCC /* InfoPlist.strings */,
+				8A94A09418B39A0A00534BCC /* OSReflectionKitTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		AC236EFE17AC908100D22D54 = {
 			isa = PBXGroup;
 			children = (
 				AC236F3317AC912400D22D54 /* OSReflectionKit */,
 				AC236F1017AC908100D22D54 /* OSReflectionKitExample */,
+				8A94A08C18B39A0A00534BCC /* OSReflectionKitTests */,
 				AC236F0917AC908100D22D54 /* Frameworks */,
 				AC236F0817AC908100D22D54 /* Products */,
 			);
@@ -85,6 +144,7 @@
 			isa = PBXGroup;
 			children = (
 				AC236F0717AC908100D22D54 /* OSReflectionKitExample.app */,
+				8A94A08718B39A0A00534BCC /* OSReflectionKitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,6 +154,7 @@
 			children = (
 				AC236F0A17AC908100D22D54 /* UIKit.framework */,
 				AC236F0C17AC908100D22D54 /* Foundation.framework */,
+				8A94A08818B39A0A00534BCC /* XCTest.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -182,6 +243,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		8A94A08618B39A0A00534BCC /* OSReflectionKitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8A94A09918B39A0A00534BCC /* Build configuration list for PBXNativeTarget "OSReflectionKitTests" */;
+			buildPhases = (
+				8A94A08318B39A0A00534BCC /* Sources */,
+				8A94A08418B39A0A00534BCC /* Frameworks */,
+				8A94A08518B39A0A00534BCC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8A94A09618B39A0A00534BCC /* PBXTargetDependency */,
+			);
+			name = OSReflectionKitTests;
+			productName = OSReflectionKitTests;
+			productReference = 8A94A08718B39A0A00534BCC /* OSReflectionKitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		AC236F0617AC908100D22D54 /* OSReflectionKitExample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AC236F3017AC908100D22D54 /* Build configuration list for PBXNativeTarget "OSReflectionKitExample" */;
@@ -205,8 +284,13 @@
 		AC236EFF17AC908100D22D54 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "iAOS Software";
+				TargetAttributes = {
+					8A94A08618B39A0A00534BCC = {
+						TestTargetID = AC236F0617AC908100D22D54;
+					};
+				};
 			};
 			buildConfigurationList = AC236F0217AC908100D22D54 /* Build configuration list for PBXProject "OSReflectionKitExample" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -221,11 +305,20 @@
 			projectRoot = "";
 			targets = (
 				AC236F0617AC908100D22D54 /* OSReflectionKitExample */,
+				8A94A08618B39A0A00534BCC /* OSReflectionKitTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		8A94A08518B39A0A00534BCC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A94A09118B39A0A00534BCC /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC236F0517AC908100D22D54 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -242,6 +335,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8A94A08318B39A0A00534BCC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A94A0A018B3A49300534BCC /* TestModel.m in Sources */,
+				8A94A09318B39A0A00534BCC /* OSReflectionKitTests.m in Sources */,
+				8A94A09B18B39A5E00534BCC /* AZReflectionTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC236F0317AC908100D22D54 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -260,7 +363,23 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		8A94A09618B39A0A00534BCC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AC236F0617AC908100D22D54 /* OSReflectionKitExample */;
+			targetProxy = 8A94A09518B39A0A00534BCC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
+		8A94A08F18B39A0A00534BCC /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8A94A09018B39A0A00534BCC /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		AC236F6217AC969500D22D54 /* MainStoryboard_iPhone.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -272,6 +391,65 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		8A94A09718B39A0A00534BCC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/OSReflectionKitExample.app/OSReflectionKitExample";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "OSReflectionKitTests/OSReflectionKitTests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = "OSReflectionKitTests/OSReflectionKitTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		8A94A09818B39A0A00534BCC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/OSReflectionKitExample.app/OSReflectionKitExample";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "OSReflectionKitTests/OSReflectionKitTests-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = "OSReflectionKitTests/OSReflectionKitTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
 		AC236F2E17AC908100D22D54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -357,6 +535,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		8A94A09918B39A0A00534BCC /* Build configuration list for PBXNativeTarget "OSReflectionKitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8A94A09718B39A0A00534BCC /* Debug */,
+				8A94A09818B39A0A00534BCC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		AC236F0217AC908100D22D54 /* Build configuration list for PBXProject "OSReflectionKitExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

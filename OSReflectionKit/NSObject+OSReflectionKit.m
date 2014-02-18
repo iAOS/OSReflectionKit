@@ -184,26 +184,40 @@
     return [_dic copy];
 }
 
-- (NSDictionary *) dictionaryWithDatesAsStringsFromDict:(NSDictionary *) dict
+- (void) enumeratePropertiesWithClass:(Class) klazz usingBlock: ( void ( ^ )( NSString *propertyName, id objectValue ) )block
+{
+    // Convert klazz objects using a block in order to serialize to JSON
+    NSArray *properties = [[self class] propertyNamesOfType:klazz];
+    for (NSString *property in properties)
+    {
+        id obj = [self valueForKey:property];
+        if([obj isKindOfClass:klazz])
+        {
+            block(property, obj);
+        }
+    }
+}
+
+- (NSDictionary *) dictionaryForJSONSerializationFromDict:(NSDictionary *) dict
 {
     NSMutableDictionary *dictionary = [dict mutableCopy];
     
     // In some cases, like for JSON, which does not accept date objects, we need to convert all NSDate objects to strings first
-    NSArray *dateProperties = [[self class] propertyNamesOfType:[NSDate class]];
     NSDateFormatter *df = [[NSDateFormatter alloc] init];
 
     // TODO: Allow to set the date format
     [df setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
-    for (NSString *property in dateProperties)
-    {
-        // Convert date to NSString
-        NSDate *date = [self valueForKey:property];
-        if([date isKindOfClass:[NSDate class]])
-        {
-            NSString *dateString = [df stringFromDate:date];
-            [dictionary setObject:dateString forKey:property];
-        }
-    }
+    
+    [self enumeratePropertiesWithClass:[NSDate class] usingBlock:^(NSString *propertyName, id objectValue) {
+        NSString *dateString = [df stringFromDate:objectValue];
+        [dictionary setObject:dateString forKey:propertyName];
+    }];
+    
+    // Convert NSSet to NSArray in order to serialize to JSON
+    [self enumeratePropertiesWithClass:[NSSet class] usingBlock:^(NSString *propertyName, id objectValue) {
+        NSSet *set = objectValue;
+        [dictionary setObject:[set allObjects] forKey:propertyName];
+    }];
     
     return dictionary;
 }
@@ -239,7 +253,7 @@
 
 - (NSString *)JSONString:(NSError **)error
 {
-    NSDictionary *dictionary = [self dictionaryWithDatesAsStringsFromDict:[self dictionary]];
+    NSDictionary *dictionary = [self dictionaryForJSONSerializationFromDict:[self dictionary]];
     
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:error];
     NSString *resultAsString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -254,7 +268,7 @@
 
 - (NSString *)reverseJSONString:(NSError **)error
 {
-    NSDictionary *dictionary = [self dictionaryWithDatesAsStringsFromDict:[self reverseDictionaryWithError:error]];
+    NSDictionary *dictionary = [self dictionaryForJSONSerializationFromDict:[self reverseDictionaryWithError:error]];
     
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:error];
     NSString *resultAsString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
