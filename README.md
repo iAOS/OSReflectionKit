@@ -15,6 +15,8 @@ jsonString = @"{\"name\" : \"Champions\", \"imageURL\" : \"http://www.cruzeiro.c
 Category *category = [Category objectFromJSON:jsonString];
 ```
 
+Version 0.7 now supports serializing/deserializing `NSSet` properties to JSON strings by automatically converting them into `NSArray` during the serialization/deserialization process.
+
 ### Loading from a dictionary
 ```objective-c
 NSDictionary *categoryDict = nil;
@@ -55,13 +57,13 @@ If you want to try it out, you can download the project and open the OSReflectio
 
 #### OSReflectionKit
 
-1. Add a pod entry for OSReflectionKit to your Podfile `pod 'OSReflectionKit', '~> 0.5.0'`
+1. Add a pod entry for OSReflectionKit to your Podfile `pod 'OSReflectionKit', '~> 0.7'`
 2. Install the pod(s) by running `pod install`.
 3. Include OSReflectionKit wherever you need it with `#import "NSObject+OSReflectionKit.h"`.
 
 #### OSReflectionKit+CoreData
 
-1. Add a pod entry for OSReflectionKit+CoreData to your Podfile `pod 'OSReflectionKit+CoreData', '~> 0.5.0'`
+1. Add a pod entry for OSReflectionKit+CoreData to your Podfile `pod 'OSReflectionKit+CoreData', '~> 0.7'`
 2. Install the pod(s) by running `pod install`.
 3. Include OSReflectionKit+CoreData wherever you need it with `#import "NSManagedObject+OSReflectionKit.h"`.
 
@@ -81,7 +83,7 @@ To set a compiler flag in Xcode, go to your active target and select the "Build 
 
 ### Custom Class
 
-Supposing you have a simple class with the following class:
+Supposing you have a simple class with the following code:
 
 ```objective-c
 #import <Foundation/Foundation.h>
