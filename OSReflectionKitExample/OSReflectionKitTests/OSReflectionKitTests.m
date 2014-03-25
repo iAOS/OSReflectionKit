@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "NSObject+OSReflectionKit.h"
 #import "TestModel.h"
+#import "PartiallySupportedModel.h"
 
 @interface OSReflectionKitTests : XCTestCase
 
@@ -47,12 +48,12 @@
     NSArray *array = @[@(1), @(2), @(3), @(4), @(5)];
     XCTAssertEqualObjects(model.array, array, @"model.array should be equal to '[1, 2, 3, 4, 5]'");
     NSSet *set = [NSSet setWithArray:@[@(2), @(3), @(4)]];
-    XCTAssertEqualObjects(model.set, set, @"model.set should be equal to '[2, 3, 4]'");
+    XCTAssertEqualObjects(model.set, set, @"model.set should be equal to '{2, 3, 4}'");
     NSDictionary *dictionary = @{@"stringTestKey":@"testValue", @"numberTestKey":@(5.3)};
     XCTAssertEqualObjects(model.dict, dictionary, @"model.dict should be equal to '{\"stringTestKey\":\"testValue\", \"numberTestKey\":5.3}'");
     
     XCTAssertEqual(model.integer, 20, @"model.integer should be equal to '20'");
-    XCTAssertEqual(model.floating, 4.53f, @"model.floating should be equal to '4.53'");
+    XCTAssertEqual(model.floating, 4.53, @"model.floating should be equal to '4.53'");
 }
 
 - (void)testObjectInstantiationWithReflectionMapping
@@ -67,12 +68,12 @@
     NSArray *array = @[@(1), @(2), @(3), @(4), @(5)];
     XCTAssertEqualObjects(model.array, array, @"model.array should be equal to '[1, 2, 3, 4, 5]'");
     NSSet *set = [NSSet setWithArray:@[@(2), @(3), @(4)]];
-    XCTAssertEqualObjects(model.set, set, @"model.set should be equal to '[2, 3, 4]'");
+    XCTAssertEqualObjects(model.set, set, @"model.set should be equal to '{2, 3, 4}'");
     NSDictionary *dictionary = @{@"stringTestKey":@"testValue", @"numberTestKey":@(5.3)};
     XCTAssertEqualObjects(model.dict, dictionary, @"model.dict should be equal to '{\"stringTestKey\":\"testValue\", \"numberTestKey\":5.3}'");
     
     XCTAssertEqual(model.integer, 20, @"model.integer should be equal to '20'");
-    XCTAssertEqual(model.floating, 4.53f, @"model.floating should be equal to '4.53'");
+    XCTAssertEqual(model.floating, 4.53, @"model.floating should be equal to '4.53'");
 }
 
 - (void)testObjectInstantiationWithCustomTransformation
@@ -95,7 +96,7 @@
     NSArray *array = @[@(1), @(2), @(3), @(4), @(5)];
     XCTAssertEqualObjects(dict[@"array"], array, @"array key should be equal to '[1, 2, 3, 4, 5]'");
     NSSet *set = [NSSet setWithArray:@[@(2), @(3), @(4)]];
-    XCTAssertEqualObjects(dict[@"set"], set, @"set key should be equal to '[2, 3, 4]'");
+    XCTAssertEqualObjects(dict[@"set"], set, @"set key should be equal to '{2, 3, 4}'");
     NSDictionary *dictionary = @{@"stringTestKey":@"testValue", @"numberTestKey":@(5.3)};
     XCTAssertEqualObjects(dict[@"dict"], dictionary, @"dict key should be equal to '{\"stringTestKey\":\"testValue\", \"numberTestKey\":5.3}'");
     
@@ -120,7 +121,7 @@
     NSArray *array = @[@(1), @(2), @(3), @(4), @(5)];
     XCTAssertEqualObjects(dict[@"list"], array, @"list key should be equal to '[1, 2, 3, 4, 5]'");
     NSSet *set = [NSSet setWithArray:@[@(2), @(3), @(4)]];
-    XCTAssertEqualObjects(dict[@"set"], set, @"set key should be equal to '[2, 3, 4]'");
+    XCTAssertEqualObjects(dict[@"set"], set, @"set key should be equal to '{2, 3, 4}'");
     NSDictionary *dictionary = @{@"stringTestKey":@"testValue", @"numberTestKey":@(5.3)};
     XCTAssertEqualObjects(dict[@"dict"], dictionary, @"dict key should be equal to '{\"stringTestKey\":\"testValue\", \"numberTestKey\":5.3}'");
     
@@ -136,16 +137,39 @@
     NSDictionary *mockDictionary = [TestModel mockDictionary];
     TestModel *model = [TestModel objectFromDictionary:mockDictionary];
     
-    NSString *json = [model JSONString];
+    NSString *json = [model reverseJSONString];
     
     XCTAssertNotNil(json, @"JSON should not be nil");
     XCTAssertTrue([json length] > 10, @"JSON length should be > 10");
+    
+    NSData *jsonData = [json dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:nil];
+    
+    XCTAssertNotNil(dict, @"dictionary should not be nil.");
+    
+    XCTAssertEqualObjects(dict[@"name"], @"Testing String...", @"name key should be equal to 'Testing String...'");
+    XCTAssertEqualObjects(dict[@"number"], @(10), @"number key should be equal to '10'");
+    NSArray *array = @[@(1), @(2), @(3), @(4), @(5)];
+    XCTAssertEqualObjects(dict[@"list"], array, @"list key should be equal to '[1, 2, 3, 4, 5]'");
+    NSSet *set = [NSSet setWithArray:@[@(2), @(3), @(4)]];
+    NSSet *jsonSet = [NSSet setWithArray:dict[@"set"]];
+    XCTAssertEqualObjects(jsonSet, set, @"set key should be equal to '{2, 3, 4}'");
+    NSDictionary *dictionary = @{@"stringTestKey":@"testValue", @"numberTestKey":@(5.3)};
+    XCTAssertEqualObjects(dict[@"dict"], dictionary, @"dict key should be equal to '{\"stringTestKey\":\"testValue\", \"numberTestKey\":5.3}'");
+    
+    XCTAssertEqual([dict[@"integer"] integerValue], 20, @"integer key should be equal to '20'");
+    XCTAssertEqual([dict[@"floating"] floatValue], 4.53f, @"floating key should be equal to '4.53'");
+    XCTAssertEqualObjects(dict[@"numberToTransform"], [NSNull null], @"numberToTransform key should be equal to '[NSNull null]'");
+    
+    XCTAssertNotNil(dict[@"nestedModel"], @"nestedModel should be in the serialized JSON string.");
+    XCTAssertEqualObjects(dict[@"nestedModel"][@"nestedString"], @"testing nested string", @"nestedModel.nestedString should be in the serialized JSON string.");
+    XCTAssertEqualObjects(dict[@"nestedModel"][@"nestedNumber"], @(39), @"nestedModel.nestedNumber should be in the serialized JSON string.");
 }
 
 - (void) testJSONDeserialization
 {
     NSDictionary *mockDictionary = [TestModel mockDictionary];
-    NSString *jsonString = [[TestModel objectFromDictionary:mockDictionary] JSONString];
+    NSString *jsonString = [[TestModel objectFromDictionary:mockDictionary] reverseJSONString];
     
     TestModel *model = [TestModel objectFromJSON:jsonString];
     
@@ -157,9 +181,76 @@
     NSArray *array = @[@(1), @(2), @(3), @(4), @(5)];
     XCTAssertEqualObjects(model.array, array, @"model.array should be equal to '[1, 2, 3, 4, 5]'");
     NSSet *set = [NSSet setWithArray:@[@(2), @(3), @(4)]];
-    XCTAssertEqualObjects(model.set, set, @"model.set should be equal to '[2, 3, 4]'");
+    XCTAssertEqualObjects(model.set, set, @"model.set should be equal to '{2, 3, 4}'");
     NSDictionary *dictionary = @{@"stringTestKey":@"testValue", @"numberTestKey":@(5.3)};
     XCTAssertEqualObjects(model.dict, dictionary, @"model.dict should be equal to '{\"stringTestKey\":\"testValue\", \"numberTestKey\":5.3}'");
+    
+    // Nested objects
+    XCTAssertEqualObjects(model.nestedModel.nestedString, @"testing nested string", @"model.nestedModel.nestedString should be equal to 'testing nested string'");
+    XCTAssertEqualObjects(model.nestedModel.nestedNumber, @(39), @"model.nestedModel.nestedNumber should be equal to '39'");
+}
+
+#pragma mark - Tests with unsupported attributes
+
+- (void)testPartiallySupportedModelObjectInstantiation
+{
+    PartiallySupportedModel *model = [PartiallySupportedModel object];
+    
+    XCTAssertNotNil(model, @"-[PartiallySupportedModel object] should return an instance of TestModel");
+    XCTAssertTrue([model isKindOfClass:[PartiallySupportedModel class]], @"-[PartiallySupportedModel object] should return an instance of TestModel");
+    
+    model = [PartiallySupportedModel objectFromDictionary:[PartiallySupportedModel specialMockDictionary]];
+    
+    XCTAssertNotNil(model, @"-[PartiallySupportedModel objectFromDictionary:] should return an instance of TestModel");
+    XCTAssertTrue([model isKindOfClass:[PartiallySupportedModel class]], @"-[PartiallySupportedModel objectFromDictionary:] should return an instance of TestModel");
+    
+    XCTAssertEqualObjects(model.string, @"Testing String...", @"model.string should be equal to 'Testing String...'");
+    XCTAssertEqualObjects(model.number, @(10), @"model.number should be equal to '10'");
+    NSArray *array = @[@(1), @(2), @(3), @(4), @(5)];
+    XCTAssertEqualObjects(model.array, array, @"model.array should be equal to '[1, 2, 3, 4, 5]'");
+    NSSet *set = [NSSet setWithArray:@[@(2), @(3), @(4)]];
+    XCTAssertEqualObjects(model.set, set, @"model.set should be equal to '{2, 3, 4}'");
+    NSDictionary *dictionary = @{@"stringTestKey":@"testValue", @"numberTestKey":@(5.3)};
+    XCTAssertEqualObjects(model.dict, dictionary, @"model.dict should be equal to '{\"stringTestKey\":\"testValue\", \"numberTestKey\":5.3}'");
+    
+    XCTAssertEqual(model.integer, 20, @"model.integer should be equal to '20'");
+    XCTAssertEqual(model.floating, 4.53, @"model.floating should be equal to '4.53'");
+    
+    XCTAssertTrue(CGPointEqualToPoint(model.point, CGPointZero), @"model.point should be equal to 'CGPointZero'");
+}
+
+- (void)testPartiallySupportedModelSerialization
+{
+    NSDictionary *mockDictionary = [PartiallySupportedModel mockDictionary];
+    PartiallySupportedModel *model = [PartiallySupportedModel objectFromDictionary:mockDictionary];
+    
+    model.point = CGPointMake(10, 20);
+    
+    NSString *json = [model reverseJSONString];
+    
+    XCTAssertNotNil(json, @"JSON should not be nil");
+    XCTAssertTrue([json length] > 10, @"JSON length should be > 10");
+    
+    NSData *jsonData = [json dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:nil];
+    
+    XCTAssertNotNil(dict, @"dictionary should not be nil.");
+    
+    XCTAssertEqualObjects(dict[@"name"], @"Testing String...", @"name key should be equal to 'Testing String...'");
+    XCTAssertEqualObjects(dict[@"number"], @(10), @"number key should be equal to '10'");
+    NSArray *array = @[@(1), @(2), @(3), @(4), @(5)];
+    XCTAssertEqualObjects(dict[@"list"], array, @"list key should be equal to '[1, 2, 3, 4, 5]'");
+    NSSet *set = [NSSet setWithArray:@[@(2), @(3), @(4)]];
+    NSSet *jsonSet = [NSSet setWithArray:dict[@"set"]];
+    XCTAssertEqualObjects(jsonSet, set, @"set key should be equal to '{2, 3, 4}'");
+    NSDictionary *dictionary = @{@"stringTestKey":@"testValue", @"numberTestKey":@(5.3)};
+    XCTAssertEqualObjects(dict[@"dict"], dictionary, @"dict key should be equal to '{\"stringTestKey\":\"testValue\", \"numberTestKey\":5.3}'");
+    
+    XCTAssertEqual([dict[@"integer"] integerValue], 20, @"integer key should be equal to '20'");
+    XCTAssertEqual([dict[@"floating"] floatValue], 4.53f, @"floating key should be equal to '4.53'");
+    XCTAssertEqualObjects(dict[@"numberToTransform"], [NSNull null], @"numberToTransform key should be equal to '[NSNull null]'");
+    
+    XCTAssertEqualObjects(dict[@"point"], [NSNull null], @"point should be nil in the serialized JSON string.");
 }
 
 @end

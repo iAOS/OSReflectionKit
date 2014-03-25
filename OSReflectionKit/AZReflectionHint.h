@@ -11,12 +11,12 @@
 @protocol AZReflectionHint <NSObject>
 @optional
 
-/*
+/**
  Custom factory method, should return fully initialized instance of the class
  */
 + (id)reflectionNewInstanceWithDictionary:(NSDictionary *)dictionary;
 
-/*
+/**
  Returns dictionary containing hints for the mapping process
  Example of the valid mapping:
  
@@ -36,16 +36,25 @@
  */
 + (NSDictionary *)reflectionMapping;
 
-/*
+/**
  Method is being so instance can handle assigning on its own, e.g. when a custom 
  type mapping is needed.
  */
 - (void)reflectionTranformsValue:(id)value forKey:(NSString *)propertyName;
 
-/*
+/**
  If implemented this method will be called after all other assignment types 
  have failed
  */
 - (void)reflectionValue:(id)value forUnkownKey:(NSString *)key;
+
+/**
+ If implemented, this method will be called when an error occurs during mapping.
+ 
+ @param error        The `NSError` object containing the error data.
+ @param value        The object/value to be assigned to the `key`.
+ @param propertyName The property name to assign the object/value.
+ */
+- (void) reflectionMappingError:(NSError *) error withValue:(id) value forKey:(NSString *) propertyName;
 
 @end

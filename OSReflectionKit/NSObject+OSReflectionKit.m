@@ -219,6 +219,28 @@
         [dictionary setObject:[set allObjects] forKey:propertyName];
     }];
     
+    NSArray *allKeys = [dictionary allKeys];
+    
+    // Valid Classes: NSString, NSNumber, NSArray, NSDictionary, or NSNull
+    NSSet *validJSONClasses = [NSSet setWithObjects:[NSString class], [NSNumber class], [NSArray class], [NSDictionary class], [NSNull class], nil];
+    
+    for (NSString *key in allKeys)
+    {
+        id objectValue = dictionary[key]
+        ;
+        // Set nil to the invalid object from the dictionary before JSON serialization
+        dictionary[key] = [NSNull null];
+        
+        [validJSONClasses enumerateObjectsUsingBlock:^(id validClass, BOOL *stop) {
+            if([objectValue isKindOfClass:validClass])
+            {
+                // Set objectValue to the valid object from the dictionary before JSON serialization
+                dictionary[key] = objectValue;
+                *stop = YES;
+            }
+        }];
+    }
+    
     return dictionary;
 }
 

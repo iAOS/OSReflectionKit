@@ -1,15 +1,14 @@
 //
-//  TestModel.h
+//  PartiallySupportedModel.h
 //  OSReflectionKitExample
 //
-//  Created by Alexandre on 18/02/14.
+//  Created by Alexandre on 24/03/14.
 //  Copyright (c) 2014 iAOS Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-#import "TestNestedModel.h"
 
-@interface TestModel : NSObject
+@interface PartiallySupportedModel : NSObject
 
 // NSObjects
 @property (nonatomic, strong) NSString *string;
@@ -19,16 +18,16 @@
 @property (nonatomic, strong) NSDictionary *dict;
 @property (nonatomic, strong) NSDate *date;
 
-// Custom Nested NSObjects
-
-@property (nonatomic, strong) TestNestedModel *nestedModel;
-
 // Primitives
 @property (nonatomic) NSInteger integer;
 @property (nonatomic) CGFloat floating;
 
 // Custom value transformation
 @property (nonatomic, strong) NSString *transformedFromNumber;
+
+// Unsupported attributes: will not be serialized/deserialized
+@property (nonatomic) CGPoint point;
+@property (nonatomic) CFStringRef stringRef;
 
 // Mock helpers
 + (NSDictionary *) mockDictionary;

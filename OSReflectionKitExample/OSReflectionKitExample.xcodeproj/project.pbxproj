@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A72BC8418E0DB6F0052FF98 /* PartiallySupportedModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A72BC8318E0DB6F0052FF98 /* PartiallySupportedModel.m */; };
+		8A72BC8718E0E7E30052FF98 /* TestNestedModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A72BC8618E0E7E30052FF98 /* TestNestedModel.m */; };
 		8A94A08918B39A0A00534BCC /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A94A08818B39A0A00534BCC /* XCTest.framework */; };
 		8A94A08A18B39A0A00534BCC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC236F0C17AC908100D22D54 /* Foundation.framework */; };
 		8A94A08B18B39A0A00534BCC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC236F0A17AC908100D22D54 /* UIKit.framework */; };
@@ -44,6 +46,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8A72BC8218E0DB6F0052FF98 /* PartiallySupportedModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PartiallySupportedModel.h; sourceTree = "<group>"; };
+		8A72BC8318E0DB6F0052FF98 /* PartiallySupportedModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PartiallySupportedModel.m; sourceTree = "<group>"; };
+		8A72BC8518E0E7E30052FF98 /* TestNestedModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestNestedModel.h; sourceTree = "<group>"; };
+		8A72BC8618E0E7E30052FF98 /* TestNestedModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestNestedModel.m; sourceTree = "<group>"; };
 		8A94A08718B39A0A00534BCC /* OSReflectionKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OSReflectionKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A94A08818B39A0A00534BCC /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		8A94A08E18B39A0A00534BCC /* OSReflectionKitTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OSReflectionKitTests-Info.plist"; sourceTree = "<group>"; };
@@ -110,8 +116,12 @@
 		8A94A08C18B39A0A00534BCC /* OSReflectionKitTests */ = {
 			isa = PBXGroup;
 			children = (
+				8A72BC8218E0DB6F0052FF98 /* PartiallySupportedModel.h */,
+				8A72BC8318E0DB6F0052FF98 /* PartiallySupportedModel.m */,
 				8A94A09E18B3A49300534BCC /* TestModel.h */,
 				8A94A09F18B3A49300534BCC /* TestModel.m */,
+				8A72BC8518E0E7E30052FF98 /* TestNestedModel.h */,
+				8A72BC8618E0E7E30052FF98 /* TestNestedModel.m */,
 				8A94A09A18B39A5E00534BCC /* AZReflectionTests.m */,
 				8A94A09218B39A0A00534BCC /* OSReflectionKitTests.m */,
 				8A94A08D18B39A0A00534BCC /* Supporting Files */,
@@ -340,8 +350,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A94A0A018B3A49300534BCC /* TestModel.m in Sources */,
+				8A72BC8418E0DB6F0052FF98 /* PartiallySupportedModel.m in Sources */,
 				8A94A09318B39A0A00534BCC /* OSReflectionKitTests.m in Sources */,
 				8A94A09B18B39A5E00534BCC /* AZReflectionTests.m in Sources */,
+				8A72BC8718E0E7E30052FF98 /* TestNestedModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

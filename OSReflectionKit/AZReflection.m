@@ -122,8 +122,6 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
                 // TODO: Automatically lower camelize the key and try again
                 //[self assignValue:obj instance:instance key:[key lowerCamelize] propertyClass:nil error:error];
                 success = NO;
-                
-                *stop = YES;
             }
 		}
         else
@@ -142,7 +140,11 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 				if(![self assignValue:obj instance:instance key:key propertyClass:NSClassFromString(customClassString) error:error])
                 {
                     success = NO;
-                    *stop = YES;
+                    
+                    if([instance respondsToSelector:@selector(reflectionMappingError:withValue:forKey:)])
+                    {
+                        [instance reflectionMappingError:*error withValue:obj forKey:key];
+                    }
                 }
 			}
 		}
@@ -215,8 +217,10 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 	Class instanceClass = [instance class];
 
 	BOOL instanceImplementsUnknownKey = [instance respondsToSelector:@selector(reflectionValue:forUnkownKey:)];
+    BOOL instanceImplementsMappingError = [instance respondsToSelector:@selector(reflectionMappingError:withValue:forKey:)];
 	
 	void(^assignmentBlock)(struct property_attributes_t attributes) = ^(struct property_attributes_t attributes){
+
 		// Actual value assigning happens here
 		if ([value isKindOfClass:[NSDictionary class]]) {
 			if (propertyClass) {
@@ -293,9 +297,7 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
                 }
             
 			}
-			
 		}
-		
 	};
 
 	// Check for property
@@ -306,8 +308,12 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 		
 		if (attributes.valid && !attributes.readonly) {
 			assignmentBlock(attributes);
-			return YES;
-		}		
+            return YES;
+		}
+		else if(instanceImplementsMappingError)
+        {
+            [instance reflectionMappingError:ReflectionMapperError(@"Failed mapping '%@' into '%@' for %@", value, key, instance) withValue:value forKey:key];
+        }
 	}
 	
 	// Check for ivar
@@ -318,6 +324,10 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 			assignmentBlock(attributes);			
 			return YES;
 		}
+		else if(instanceImplementsMappingError)
+        {
+            [instance reflectionMappingError:ReflectionMapperError(@"Failed mapping '%@' into '%@' for %@", value, key, instance) withValue:value forKey:key];
+        }
 	}
 	
 	if (instanceImplementsUnknownKey) {

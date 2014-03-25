@@ -1,15 +1,15 @@
 //
-//  TestModel.m
+//  PartiallySupportedModel.m
 //  OSReflectionKitExample
 //
-//  Created by Alexandre on 18/02/14.
+//  Created by Alexandre on 24/03/14.
 //  Copyright (c) 2014 iAOS Software. All rights reserved.
 //
 
-#import "TestModel.h"
+#import "PartiallySupportedModel.h"
 #import "NSObject+OSReflectionKit.h"
 
-@implementation TestModel
+@implementation PartiallySupportedModel
 
 #pragma mark - Reflection Kit Support
 
@@ -17,8 +17,7 @@
 {
     return @{@"name":@"string",
              @"list":@"array",
-             @"numberToTransform":@"transformedFromNumber,*",
-             @"nestedModel":@"nestedModel,<TestNestedModel>"};
+             @"numberToTransform":@"transformedFromNumber,*"};
 }
 
 - (void)reflectionTranformsValue:(id)value forKey:(NSString *)propertyName
@@ -32,6 +31,21 @@
     }
 }
 
+- (void)reflectionMappingError:(NSError *)error withValue:(id)value forKey:(NSString *)propertyName
+{
+    NSLog(@"[MAPPING ERROR]: %@", [error localizedDescription]);
+}
+
+#pragma mark - NSKeyValueCoding
+
+- (id)valueForUndefinedKey:(NSString *)key
+{
+    if([key isEqualToString:@"stringRef"])
+        return (__bridge id)(_stringRef);
+    
+    return nil;
+}
+
 #pragma mark - Mock Methods
 
 + (NSDictionary *) mockDictionary
@@ -43,8 +57,7 @@
              @"dict":@{@"stringTestKey":@"testValue", @"numberTestKey":@(5.3)},
              @"integer":@(20),
              @"floating":@(4.53),
-             @"date":@"2014-02-14",
-             @"nestedModel":@{@"nestedString":@"testing nested string", @"nestedNumber":@(39)}};
+             @"date":@"2014-02-14"};
 }
 
 + (NSDictionary *) specialMockDictionary
@@ -57,7 +70,8 @@
              @"integer":@(20),
              @"floating":@(4.53),
              @"date":@"2014-02-14",
-             @"nestedModel":@{@"nestedString":@"testing nested string", @"nestedNumber":@(39)}};
+             @"point":@{@"x":@(10), @"y":@(20)},
+             @"stringRef":@"testing CFStringRef type"};
 }
 
 @end

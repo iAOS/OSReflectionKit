@@ -60,7 +60,7 @@
     XCTAssertEqualObjects(model.dict, dictionary, @"model.dict should be equal to '{\"stringTestKey\":\"testValue\", \"numberTestKey\":5.3}'");
     
     XCTAssertEqual(model.integer, 20, @"model.integer should be equal to '20'");
-    XCTAssertEqual(model.floating, 4.53f, @"model.floating should be equal to '4.53'");
+    XCTAssertEqual(model.floating, 4.53, @"model.floating should be equal to '4.53'");
 }
 
 - (void) testObjectInstantiation
@@ -82,7 +82,7 @@
     XCTAssertEqualObjects(model.dict, dictionary, @"model.dict should be equal to '{\"stringTestKey\":\"testValue\", \"numberTestKey\":5.3}'");
     
     XCTAssertEqual(model.integer, 20, @"model.integer should be equal to '20'");
-    XCTAssertEqual(model.floating, 4.53f, @"model.floating should be equal to '4.53'");
+    XCTAssertEqual(model.floating, 4.53, @"model.floating should be equal to '4.53'");
 }
 
 @end
