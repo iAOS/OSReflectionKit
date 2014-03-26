@@ -5,6 +5,8 @@
 //  Created by Alexander Zats on 5/4/12.
 //  Copyright (c) 2012 Alexander Zats. All rights reserved.
 //
+//  Extended by Alexandre Santos
+//
 
 #import <Foundation/Foundation.h>
 

@@ -5,6 +5,7 @@
 //  Created by Alexander Zats on 5/9/12.
 //
 //  Extended by Alexandre Santos
+//  Copyright (c) 2012 iAOS Software. All rights reserved.
 //
 
 /*

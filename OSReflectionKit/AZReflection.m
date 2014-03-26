@@ -9,6 +9,10 @@
 //  Copyright (c) 2012 iAOS Software. All rights reserved.
 //
 
+#if  ! __has_feature(objc_arc)
+#error This file must be compiled with ARC. Use -fobjc-arc flag (or convert project to ARC).
+#endif
+
 #import "AZReflection.h"
 #import <objc/runtime.h>
 #import "AZReflectionHint.h"
