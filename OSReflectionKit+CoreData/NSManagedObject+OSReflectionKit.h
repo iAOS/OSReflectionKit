@@ -60,7 +60,7 @@
 + (NSArray *) uniqueFields;
 
 /**
- @return An array of field names that will be auto incremented by the instanciation methods if not present in the dictionary.
+ @return An array of field names that will be auto incremented by the instantiation methods if not present in the dictionary.
  By default it returns nil.
  */
 + (NSArray *) autoincrementFields;
@@ -209,6 +209,7 @@
 
 + (NSArray *) fetchUniqueObjectsWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName limit:(NSUInteger) limit;
 
++ (NSArray *) fetchWithPredicate:(NSPredicate *) predicate sortDescriptors:(NSArray *) sortDescriptors limit:(NSUInteger) limit;
 + (NSArray *) fetchWithPredicate:(NSPredicate *) predicate limit:(NSUInteger) limit;
 
 #pragma mark - Persistence Methods

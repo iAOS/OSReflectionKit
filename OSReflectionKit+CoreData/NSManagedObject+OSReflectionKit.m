@@ -13,6 +13,8 @@
 #import "NSManagedObject+OSReflectionKit.h"
 #import "NSPredicate+OSReflectionKit.h"
 
+static NSString * const OSReflectionKitCoreDataExtensionsErrorDomain = @"OSReflectionKitCoreDataExtensionsErrorDomain";
+
 @implementation NSManagedObject (OSReflectionKit)
 
 static NSManagedObjectContext *_defaultContext = nil;
@@ -122,11 +124,18 @@ static NSManagedObjectContext *_defaultContext = nil;
     if([dictionary count] > 0)
     {
         NSError *error = nil;
-        [object mapWithDictionary:dictionary error:&error];
-        
-        if(error)
+        if(![object mapWithDictionary:dictionary error:&error])
             NSLog(@"Error mapping object: %@", error);
     }
+    
+    // Auto-increment
+    NSError *error = nil;
+    NSDictionary *autoincrementedFields = [object autoincrementedFieldsDictWithError:&error];
+    if (error)
+        NSLog(@"Error auto-incrementing fields: %@", error);
+    
+    if(![object mapWithDictionary:autoincrementedFields error:&error])
+        NSLog(@"Error mapping object for auto-increment fields: %@", error);
     
     return object;
 }
@@ -288,7 +297,7 @@ static NSManagedObjectContext *_defaultContext = nil;
     return objects;
 }
 
-+ (NSArray *) fetchWithPredicate:(NSPredicate *) predicate limit:(NSUInteger) limit
++ (NSArray *) fetchWithPredicate:(NSPredicate *) predicate sortDescriptors:(NSArray *) sortDescriptors limit:(NSUInteger) limit
 {
     NSAssert([self defaultManagedObjectContext], @"Please register the default managed object context for class: '%@' before using '%s'.", NSStringFromClass([self class]), __PRETTY_FUNCTION__);
     
@@ -297,19 +306,23 @@ static NSManagedObjectContext *_defaultContext = nil;
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:[self entityName]];
     
     if(limit > 0)
-    {
         request.fetchLimit = limit;
-    }
-
+    
+    if(sortDescriptors)
+        request.sortDescriptors = sortDescriptors;
+    
     if(predicate)
-    {
         request.predicate = predicate;
-    }
     
     NSError *error = nil;
     objects = [[self defaultManagedObjectContext] executeFetchRequest:request error:&error];
     
     return objects;
+}
+
++ (NSArray *) fetchWithPredicate:(NSPredicate *) predicate limit:(NSUInteger) limit
+{
+    return [self fetchWithPredicate:predicate sortDescriptors:nil limit:limit];
 }
 
 
@@ -416,7 +429,67 @@ static NSManagedObjectContext *_defaultContext = nil;
 
 - (BOOL) saveWithContext:(NSManagedObjectContext *) context error:(NSError **) error
 {
+    // Check whether it should auto-increment fields before saving
+    NSDictionary *autoincrementedFields = [self autoincrementedFieldsDictWithError:error];
+    if(autoincrementedFields)
+        [self mapWithDictionary:autoincrementedFields error:error];
+    
     return [context save:error];
+}
+
+#pragma mark - Private Methods
+
+- (NSDictionary *) autoincrementedFieldsDictWithError:(NSError **) error
+{
+    BOOL success = YES;
+    NSArray *allAutoincrementFields = [[self class] autoincrementFields];
+    NSMutableArray *ignoredFields = [NSMutableArray array];
+    NSMutableDictionary *fieldsDictionary = [NSMutableDictionary dictionaryWithCapacity:[allAutoincrementFields count]];
+    
+    for (NSString *autoincrementField in allAutoincrementFields)
+    {
+        // Only auto-increment case the object is not set yet.
+        id currentValue = [self valueForKey:autoincrementField];
+        if(currentValue == nil ||
+           [currentValue isKindOfClass:[NSNull class]])
+        {
+            // Generate the new field value
+            NSArray *items = [[self class] fetchWithPredicate:nil
+                                              sortDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:autoincrementField ascending:NO]]
+                                                        limit:1];
+            if([items count] > 0)
+            {
+                id item = items[0];
+                NSNumber *maxValue = [item valueForKey:autoincrementField];
+                if([maxValue isKindOfClass:[NSNumber class]])
+                {
+                    NSUInteger nextValue = [maxValue unsignedIntegerValue] < NSUIntegerMax ? [maxValue unsignedIntegerValue] + 1 : NSUIntegerMax;
+                    [fieldsDictionary setValue:@(nextValue) forKey:autoincrementField];
+                }
+                else
+                {
+                    [ignoredFields addObject:[NSString stringWithFormat:@"'%@'", autoincrementField]];
+                    success = NO;
+                }
+            }
+        }
+    }
+    
+    if(*error && [ignoredFields count] > 0)
+    {
+        NSString *errorMessage = nil;
+        NSString *fieldsString = [ignoredFields componentsJoinedByString:@", "];
+        if([ignoredFields count] > 1)
+            errorMessage = [NSString stringWithFormat:@"Properties %@ are being ignored because they are not numbers!", fieldsString];
+        else
+            errorMessage = [NSString stringWithFormat:@"Property %@ is being ignored because it's not a number!", fieldsString];
+        
+        *error = [NSError errorWithDomain:OSReflectionKitCoreDataExtensionsErrorDomain
+                                     code:-1
+                                 userInfo:@{NSLocalizedDescriptionKey: errorMessage}];
+    }
+
+    return [fieldsDictionary count] > 0 ? fieldsDictionary : nil;
 }
 
 @end

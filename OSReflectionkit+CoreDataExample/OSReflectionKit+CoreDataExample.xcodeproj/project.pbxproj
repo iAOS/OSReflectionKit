@@ -83,6 +83,67 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8A9FC1E51914E90D0087E977 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				8AEDDE7B17B05806003CF0BF /* InfoPlist.strings */,
+				8AEDDE7517B05806003CF0BF /* Default-568h@2x.png */,
+				8AEDDE7617B05806003CF0BF /* Default.png */,
+				8AEDDE7717B05806003CF0BF /* Default@2x.png */,
+				8AEDDE8117B05806003CF0BF /* main.m */,
+				8AEDDE8417B05806003CF0BF /* OSReflectionKit+CoreDataExample-Info.plist */,
+				8AEDDE8517B05806003CF0BF /* OSReflectionKit+CoreDataExample-Prefix.pch */,
+			);
+			name = "Support Files";
+			sourceTree = "<group>";
+		};
+		8A9FC1E61914E9540087E977 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8A73229B189FD5E600DEBBD7 /* Event.h */,
+				8A73229C189FD5E600DEBBD7 /* Event.m */,
+				8AEDDE8617B05806003CF0BF /* OSReflectionKit+CoreDataExample.xcdatamodeld */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		8A9FC1E71914E9610087E977 /* ModelsCategories */ = {
+			isa = PBXGroup;
+			children = (
+				8A732295189FD06300DEBBD7 /* Event+ReflectionKitOptions.h */,
+				8A732296189FD06300DEBBD7 /* Event+ReflectionKitOptions.m */,
+			);
+			name = ModelsCategories;
+			sourceTree = "<group>";
+		};
+		8A9FC1E81914E9A80087E977 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				8AEDDE7817B05806003CF0BF /* DetailViewController.h */,
+				8AEDDE7917B05806003CF0BF /* DetailViewController.m */,
+				8AEDDE8217B05806003CF0BF /* MasterViewController.h */,
+				8AEDDE8317B05806003CF0BF /* MasterViewController.m */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		8A9FC1E91914E9DF0087E977 /* AppDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				8AEDDE7317B05806003CF0BF /* AppDelegate.h */,
+				8AEDDE7417B05806003CF0BF /* AppDelegate.m */,
+			);
+			name = AppDelegate;
+			sourceTree = "<group>";
+		};
+		8A9FC1EA1914E9F40087E977 /* Nibs */ = {
+			isa = PBXGroup;
+			children = (
+				8AEDDE7D17B05806003CF0BF /* MainStoryboard.storyboard */,
+			);
+			name = Nibs;
+			sourceTree = "<group>";
+		};
 		8AEDDDFD17B042F0003CF0BF = {
 			isa = PBXGroup;
 			children = (
@@ -140,36 +201,15 @@
 			path = "../OSReflectionKit+CoreData";
 			sourceTree = "<group>";
 		};
-		8AEDDE7A17B05806003CF0BF /* en.lproj */ = {
-			isa = PBXGroup;
-			children = (
-				8AEDDE7B17B05806003CF0BF /* InfoPlist.strings */,
-				8AEDDE7D17B05806003CF0BF /* MainStoryboard.storyboard */,
-			);
-			path = en.lproj;
-			sourceTree = "<group>";
-		};
 		8AEDDE9517B0581D003CF0BF /* OSReflectionKit+CoreDataExample */ = {
 			isa = PBXGroup;
 			children = (
-				8AEDDE7A17B05806003CF0BF /* en.lproj */,
-				8AEDDE7317B05806003CF0BF /* AppDelegate.h */,
-				8AEDDE7417B05806003CF0BF /* AppDelegate.m */,
-				8AEDDE7517B05806003CF0BF /* Default-568h@2x.png */,
-				8AEDDE7617B05806003CF0BF /* Default.png */,
-				8AEDDE7717B05806003CF0BF /* Default@2x.png */,
-				8AEDDE7817B05806003CF0BF /* DetailViewController.h */,
-				8AEDDE7917B05806003CF0BF /* DetailViewController.m */,
-				8AEDDE8117B05806003CF0BF /* main.m */,
-				8AEDDE8217B05806003CF0BF /* MasterViewController.h */,
-				8AEDDE8317B05806003CF0BF /* MasterViewController.m */,
-				8AEDDE8417B05806003CF0BF /* OSReflectionKit+CoreDataExample-Info.plist */,
-				8AEDDE8517B05806003CF0BF /* OSReflectionKit+CoreDataExample-Prefix.pch */,
-				8A73229B189FD5E600DEBBD7 /* Event.h */,
-				8A73229C189FD5E600DEBBD7 /* Event.m */,
-				8AEDDE8617B05806003CF0BF /* OSReflectionKit+CoreDataExample.xcdatamodeld */,
-				8A732295189FD06300DEBBD7 /* Event+ReflectionKitOptions.h */,
-				8A732296189FD06300DEBBD7 /* Event+ReflectionKitOptions.m */,
+				8A9FC1E91914E9DF0087E977 /* AppDelegate */,
+				8A9FC1E81914E9A80087E977 /* ViewControllers */,
+				8A9FC1EA1914E9F40087E977 /* Nibs */,
+				8A9FC1E51914E90D0087E977 /* Support Files */,
+				8A9FC1E61914E9540087E977 /* Models */,
+				8A9FC1E71914E9610087E977 /* ModelsCategories */,
 			);
 			name = "OSReflectionKit+CoreDataExample";
 			sourceTree = "<group>";
@@ -264,6 +304,7 @@
 				8AEDDE7C17B05806003CF0BF /* en */,
 			);
 			name = InfoPlist.strings;
+			path = en.lproj;
 			sourceTree = "<group>";
 		};
 		8AEDDE7D17B05806003CF0BF /* MainStoryboard.storyboard */ = {
@@ -272,6 +313,7 @@
 				8AEDDE7E17B05806003CF0BF /* en */,
 			);
 			name = MainStoryboard.storyboard;
+			path = en.lproj;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

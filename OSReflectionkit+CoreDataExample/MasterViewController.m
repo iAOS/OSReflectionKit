@@ -45,9 +45,8 @@
 - (void)insertNewObject:(id)sender
 {
     NSDate *date = [NSDate date];
-    NSInteger eventId = [Event count];
     // Create the object from a NSDictionary object
-    Event *event = [Event objectFromDictionary:@{@"timeStamp" : date, @"eventId":@(eventId)}];
+    Event *event = [Event objectFromDictionary:@{@"timeStamp" : date}];
     
     NSLog(@"Is New: %d", [event isNew]);
     NSLog(@"Is Saved: %d", [event isSaved]);
@@ -223,6 +222,7 @@
 {
     Event *object = [self.fetchedResultsController objectAtIndexPath:indexPath];
     cell.textLabel.text = [object.timeStamp description];
+    cell.detailTextLabel.text = [object.eventId stringValue];
 }
 
 @end
