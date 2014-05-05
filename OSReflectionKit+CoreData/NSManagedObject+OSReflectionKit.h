@@ -1,6 +1,6 @@
 //
 //  NSManagedObject+OSReflectionKit.h
-//  OSReflectionKit+CoreDataExample
+//  OSReflectionKit+CoreData
 //
 //  Created by Alexandre on 05/08/13.
 //
@@ -41,7 +41,16 @@
 /// @name Class Properties
 ///-----------------------------
 
+/**
+Registers the default managed object context for the current class.
+
+@param context The managed object context to be registered.
+*/
 + (void) registerDefaultManagedObjectContext:(NSManagedObjectContext *) context;
+
+/**
+ @return The registered default managed object context.
+ */
 + (NSManagedObjectContext *) defaultManagedObjectContext;
 
 /**
@@ -65,14 +74,28 @@
  */
 + (NSArray *) autoincrementFields;
 
+/**
+ @return The entity description object for the entityName in the defaultManagedObjectContext.
+ */
 + (NSEntityDescription *) entityDescription;
 
 ///-----------------------------
 /// @name Instance Properties
 ///-----------------------------
 
+/**
+ @return YES case the current instance has been saved before.
+ */
 - (BOOL) isSaved;
+
+/**
+ @return YES case the current instance has not been saved before.
+ */
 - (BOOL) isNew;
+
+/**
+ @return YES case the current instance has been deleted.
+ */
 - (BOOL) hasBeenDeleted;
 
 #pragma mark - Instantiation Methods
@@ -81,115 +104,43 @@
 /// @name Instantiation Methods
 ///-----------------------------
 
-/**
- Creates an instance from the type of the calling class.
- 
- @return The instance of the created object
- @see -objectFromDictionary:
- */
-+ (instancetype) objectWithController:(NSFetchedResultsController *) controller __deprecated;
-
-/**
- Creates an instance from the type of the calling class and sets its properties from a `NSDictionay` object.
- 
- @param dictionary The `NSDictionary` object containing the object data.
- @return The instance of the created object
- @discussion If you have a class that has a property: `NSString` *name, then you can call [CustomClassName objectFromDictionay:@{@"name" : @"Alexandre Santos"}] and it will return an object of the type 'CustomClassName' with the attribute 'name' containing the value 'Alexandre Santos'.
- @see -object
- */
-+ (instancetype) objectFromDictionary:(NSDictionary *) dictionary withController:(NSFetchedResultsController *) controller __deprecated;
+#pragma mark From Dictionaries
 
 /**
  Creates a `NSArray` instance from the type of the calling class and sets its properties from an array of `NSDictionay` objects.
  
  @param dicts An array of `NSDictionary` objects containing the objects data.
+ @param context The managed object context to create/fetch instances.
  @return An array of objects from the calling class type.
- @deprecated Please use `objectsFromDicts:inManagedObjectContext` instead.
- @see -objectFromDictionary:
  */
-+ (NSArray *) objectsFromDicts:(NSArray *) dicts withController:(NSFetchedResultsController *) controller __deprecated;
-
-/**
- Creates a `NSArray` instance from the type of the calling class and sets its properties from an array of `NSDictionay` objects.
- 
- @param dicts An array of `NSDictionary` objects containing the objects data.
- @return An array of objects from the calling class type.
- @discussion Please use `+objectsFromDicts:`
- @see -objectFromDictionary:
- */
-+ (NSArray *) objectsFromDicts:(NSArray *) dicts inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName;
 + (NSArray *) objectsFromDicts:(NSArray *) dicts inManagedObjectContext:(NSManagedObjectContext *) context;
 
 /**
- Creates an instance from the type of the calling class.
+ Creates or fetch an instance from the type of the calling class based on the unique fields specified for the class.
  
+ @param dictionary The dictionary to be used to map to properties.
  @param context The context where to create the object
  @return The instance of the created object
- @discussion This method does the same thing as `objectWithInManagedObjectContext:forEntityName:` using the method `entityName`.
  @see -objectFromDictionary:
  */
 + (instancetype) objectFromDictionary:(NSDictionary *) dictionary inManagedObjectContext:(NSManagedObjectContext *) context;
 
-/**
- Creates an instance from the type of the calling class.
- 
- @param context The context where to create the object
- @return The instance of the created object
- @discussion This method does the same thing as `objectWithInManagedObjectContext:forEntityName:` using the method `entityName`.
- @see -objectFromDictionary:
- */
-+ (instancetype) objectFromDictionary:(NSDictionary *) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName;
+#pragma mark No Mapping
 
 /**
  Creates an instance from the type of the calling class.
  
  @param context The context where to create the object
  @return The instance of the created object
- @discussion This method does the same thing as `objectWithInManagedObjectContext:forEntityName:` using the `+entityName` method.
- @see -objectFromDictionary:
  */
 + (instancetype) objectInManagedObjectContext:(NSManagedObjectContext *) context;
 
-/**
- Creates an instance from the type of the calling class.
- 
- @param context The context where to create the object
- @param entityName The name of an entity.
- @return The instance of the created object
- @see -objectFromDictionary:
- */
-+ (instancetype) objectInManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName;
+#pragma mark From JSON
 
-/**
- Creates an instance from the type of the calling class and sets its properties from a string containing a JSON object.
- This method converts the jsonString into a dictionary before calling the `-objectFromDictionary:` method.
- 
- @param jsonString The string containing the json object data.
- @param error The error variable to return an error object.
- @return The instance of the created object
- @discussion If you have a class that has a property: `NSString` *name, then you can call [CustomClassName objectFromJSON:@"{"name" : "Alexandre Santos"}"] and it will return an object of the type 'CustomClassName' with the attribute 'name' containing the value 'Alexandre Santos'.
- @see -objectFromDictionary:
- */
-+ (instancetype) objectFromJSON:(NSString *) jsonString withController:(NSFetchedResultsController *) controller error:(NSError **) error __deprecated;
-+ (instancetype) objectFromJSON:(NSString *) jsonString withController:(NSFetchedResultsController *) controller __deprecated;
-
-+ (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName error:(NSError **) error;
-+ (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName;
++ (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context error:(NSError **) error;
 + (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context;
 
-/**
- Creates a `NSArray` instance from the type of the calling class and sets its properties from an array of JSON objects.
- 
- @param jsonArray An array of JSON objects containing the json objects data.
- @param error The error variable to return an error object.
- @return An array of objects from the calling class type.
- @see -objectFromJSON:
- */
-+ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray withController:(NSFetchedResultsController *) controller error:(NSError **) error __deprecated;
-+ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray withController:(NSFetchedResultsController *) controller __deprecated;
-
-+ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName error:(NSError **) error;
-+ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName ;
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context error:(NSError **) error;
 + (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context;
 
 #pragma mark - Fetcher Helpers
@@ -198,19 +149,104 @@
 /// @name Fetcher Methods
 ///-----------------------------
 
+/**
+ Count the number of objects stored for the calling class.
+ 
+ @return The total number of objects stored for the class in the default context.
+ */
 + (NSUInteger) count;
+
+/**
+ Count the number of objects stored for the calling class, filtered by the predicate.
+ 
+ @param predicate The predicate used to filter the objects.
+ @return The number of objects stored for the class in the default context, filtered by the predicate.
+ */
++ (NSUInteger) countWithPredicate:(NSPredicate *) predicate;
+
+/**
+ Count the number of objects stored for the calling class.
+ 
+ @param context The given managed object context.
+ @return The total number of objects stored for the class in the specified context.
+ */
 + (NSUInteger) countInManagedObjectContext:(NSManagedObjectContext *) context;
 
-+ (NSUInteger) countInManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName withPredicate:(NSPredicate *) predicate;
+/**
+ Count the number of objects stored for the calling class.
+ 
+ @param context The given managed object context.
+ @param entityName The given entity name.
+ @param predicate The predicate used to filter the objects.
+ @return The total number of objects stored for the class in the specified context.
+ */
++ (NSUInteger) countInManagedObjectContext:(NSManagedObjectContext *) context withPredicate:(NSPredicate *) predicate;
 
-+ (NSUInteger) countUniqueObjectsWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName limit:(NSUInteger) limit;
+/**
+ Count the number of unique objects stored for the calling class.
+ 
+ @param dictionary The dictionary to extract the unique fields values in order to filter objects.
+ @param context The given managed object context.
+ @return The total number of unique objects stored for the class in the specified context.
+ */
++ (NSUInteger) countUniqueObjectsWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context;
 
-+ (instancetype) firstWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName;
+/**
+ Finds the first object with the given unique values in the dictionary.
+ 
+ @param attributes The attributes dictionary to filter objects.
+ @param context The given managed object context.
+ @param entityName The given entity name.
+ 
+ @return The found object or nil otherwise.
+ */
++ (instancetype) firstWithAttributes:(NSDictionary * ) attributes inManagedObjectContext:(NSManagedObjectContext *) context;
 
-+ (NSArray *) fetchUniqueObjectsWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName limit:(NSUInteger) limit;
+/**
+ Finds the first object with the given values in the dictionary.
+ 
+ @param attributes The attributes dictionary to filter objects.
+ 
+ @return The found object or nil otherwise.
+ */
++ (instancetype) firstWithAttributes:(NSDictionary * ) attributes;
 
-+ (NSArray *) fetchWithPredicate:(NSPredicate *) predicate sortDescriptors:(NSArray *) sortDescriptors limit:(NSUInteger) limit;
-+ (NSArray *) fetchWithPredicate:(NSPredicate *) predicate limit:(NSUInteger) limit;
+/**
+ Uses the default context to execute the fetch request.
+ 
+ @param request The fetch request to be executed.
+ 
+ @return An array of objects that meet the criteria specified by request fetched from the receiver and from the persistent stores associated with the receiver’s persistent store coordinator. If an error occurs, returns nil. If no objects match the criteria specified by request, returns an empty array.
+ */
++ (NSArray *) fetchWithRequest:(NSFetchRequest *) request;
+
+/**
+ Uses the default context to execute the fetch request.
+ 
+ @param request The fetch request to be executed.
+ @param error If there is a problem executing the fetch, upon return contains an instance of NSError that describes the problem.
+ 
+ @return An array of objects that meet the criteria specified by request fetched from the receiver and from the persistent stores associated with the receiver’s persistent store coordinator. If an error occurs, returns nil. If no objects match the criteria specified by request, returns an empty array.
+ */
++ (NSArray *) fetchWithRequest:(NSFetchRequest *) request error:(NSError **) error;
+
+/**
+ Creates a fetch request for the calling class.
+ 
+ @param attributes The matching attributes to be included in the fetch request.
+ 
+ @return The created fetch request.
+ */
++ (NSFetchRequest *) fetchRequestForObjectsWithAttributes:(NSDictionary * ) attributes;
+
+/**
+ Creates a fetch request for the calling class including the unique attributes present in the attributes dictionary.
+ 
+ @param attributes The matching attributes to be included in the fetch request.
+ 
+ @return The created fetch request.
+ */
++ (NSFetchRequest *) fetchRequestForUniqueObjectsWithAttributes:(NSDictionary * ) attributes;
 
 #pragma mark - Persistence Methods
 

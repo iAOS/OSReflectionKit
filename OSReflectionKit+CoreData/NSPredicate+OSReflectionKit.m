@@ -1,6 +1,6 @@
 //
 //  NSPredicate+OSReflectionKit.m
-//  OSReflectionKit+CoreDataExample
+//  OSReflectionKit+CoreData
 //
 //  Created by Alexandre on 03/02/14.
 //  Copyright (c) 2014 iAOS Software. All rights reserved.
@@ -14,6 +14,28 @@
 #import "NSManagedObject+OSReflectionKit.h"
 
 @implementation NSPredicate (OSReflectionKit)
+
++ (instancetype) predicateWithAttributes:(NSDictionary *) attributes
+{
+    NSPredicate *predicate = nil;
+    
+    NSArray *keys = [attributes allKeys];
+    
+    if([keys count] > 0)
+    {
+        NSMutableString *predicateFormat = [[keys componentsJoinedByString:@" = %@ &&"] mutableCopy];
+        [predicateFormat appendString:@" = %@"];
+        NSMutableArray *values = [NSMutableArray arrayWithCapacity:[keys count]];
+        for (NSString *key in keys) {
+            [values addObject:attributes[key]];
+        }
+        
+        if([values count] > 0)
+            predicate = [NSPredicate predicateWithFormat:predicateFormat argumentArray:values];
+    }
+    
+    return predicate;
+}
 
 + (instancetype) predicateForUniqueness:(Class) klazz withDictionary:(NSDictionary *) dictionary
 {

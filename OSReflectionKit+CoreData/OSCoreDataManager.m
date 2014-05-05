@@ -1,6 +1,6 @@
 //
 //  OSCoreDataManager.m
-//  OSReflectionKit+CoreDataExample
+//  OSReflectionKit+CoreData
 //
 //  Created by Alexandre on 03/02/14.
 //  Copyright (c) 2014 iAOS Software. All rights reserved.
@@ -60,7 +60,7 @@ static NSString *_modelFileName = nil;
 }
 
 // Returns the managed object context for the application.
-// If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
+// If the context doesn't already exist, it is created and bound to the current persistent store coordinator.
 - (NSManagedObjectContext *)managedObjectContext
 {
     if (_managedObjectContext != nil) {
@@ -76,7 +76,7 @@ static NSString *_modelFileName = nil;
 }
 
 // Returns the managed object model for the application.
-// If the model doesn't already exist, it is created from the application's model.
+// If the model doesn't already exist, it is created from the registered model file name.
 - (NSManagedObjectModel *)managedObjectModel
 {
     if (_managedObjectModel != nil) {
@@ -94,7 +94,7 @@ static NSString *_modelFileName = nil;
 }
 
 // Returns the persistent store coordinator for the application.
-// If the coordinator doesn't already exist, it is created and the application's store added to it.
+// If the coordinator doesn't already exist, it is created and the managed store added to it.
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
     if (_persistentStoreCoordinator != nil) {

@@ -28,6 +28,16 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "8A9FC1EE19162E0B0087E977"
+               BuildableName = "OSReflectionKit+CoreDataTests.xctest"
+               BlueprintName = "OSReflectionKit+CoreDataTests"
+               ReferencedContainer = "container:OSReflectionKit+CoreDataExample.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
