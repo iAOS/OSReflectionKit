@@ -137,10 +137,42 @@ Registers the default managed object context for the current class.
 
 #pragma mark From JSON
 
+/**
+ Creates or finds an instance matching the jsonString with the unique fields.
+ 
+ @param jsonString The JSON string to map the object.
+ @param context    The managed object context to use.
+ @param error      The error reference to return an error, case any.
+ @return The instance of the created or found object.
+ */
 + (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context error:(NSError **) error;
+
+/**
+ Creates or finds an instance matching the jsonString with the unique fields.
+ 
+ @param jsonString The JSON object to map the instance.
+ @param context    The managed object context to use.
+ @return The instance of the created or found object.
+ */
 + (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context;
 
+/**
+ Creates or finds instances matching each JSON object in the JSON array with the unique fields.
+ 
+ @param jsonArray The JSON array containing JSON objects to map the instance.
+ @param context    The managed object context to use.
+ @param error      The error reference to return an error, case any.
+ @return The array of instances of the created or found objects.
+ */
 + (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context error:(NSError **) error;
+
+/**
+ Creates or finds instances matching each JSON object in the JSON array with the unique fields.
+ 
+ @param jsonArray The JSON array containing JSON objects to map the instance.
+ @param context    The managed object context to use.
+ @return The array of instances of the created or found objects.
+ */
 + (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context;
 
 #pragma mark - Fetcher Helpers
