@@ -37,6 +37,8 @@
 
 @interface NSObject (OSReflectionKit) <NSCopying, NSCoding>
 
+#pragma mark - Instantiation Methods
+
 ///-----------------------------
 /// @name Instantiation Methods
 ///-----------------------------
@@ -79,6 +81,15 @@
  @see -objectFromDictionary:
  */
 + (instancetype) objectFromJSON:(NSString *) jsonString error:(NSError **) error;
+
+/**
+ Creates an instance from the type of the calling class and sets its properties from a string containing a JSON object.
+ This method converts the jsonString into a dictionary before calling the `-objectFromDictionary:` method.
+ 
+ @param jsonString The string containing the json object data.
+ @return The instance of the created object.
+ @discussion If you have a class that has a property: `NSString` *name, then you can call [CustomClassName objectFromJSON:@"{"name" : "Alexandre Santos"}"] and it will return an object of the type 'CustomClassName' with the attribute 'name' containing the value 'Alexandre Santos'.
+ */
 + (instancetype) objectFromJSON:(NSString *) jsonString;
 
 /**
@@ -89,8 +100,18 @@
  @return An array of objects from the calling class type.
  @see -objectFromJSON:
  */
-+ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray error:(NSError **) error;;
++ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray error:(NSError **) error;
+
+/**
+ Creates a `NSArray` instance from the type of the calling class and sets its properties from an array of JSON objects.
+ 
+ @param jsonArray An array of JSON objects containing the json objects data.
+ @return An array of objects from the calling class type.
+ @see -objectsFromJSONArray:error:
+ */
 + (NSArray *)objectsFromJSONArray:(NSString *)jsonArray;
+
+#pragma mark - Class Reflection
 
 ///-----------------------------
 /// @name Class Reflection
@@ -121,6 +142,8 @@
  @return An array of property names that are of the type `klass`
  */
 + (NSArray*) propertyNamesOfType:(Class) klass;
+
+#pragma mark - Instance Reflection
 
 ///-----------------------------
 /// @name Instance Reflection
@@ -158,6 +181,14 @@
  @see -dictionary
  */
 - (NSString *) JSONString:(NSError **) error;
+
+/**
+ Converts the current instance object into a JSON String.
+ 
+ @discussion If a property is `nil`, an NSNull object will be created for it in the JSON string returned.
+ @return A `NSString` object formatted as JSON, with the values for the properties of the instance.
+ @see -dictionary
+ */
 - (NSString *) JSONString;
 
 /**
@@ -169,6 +200,14 @@
  @see -dictionary
  */
 - (NSString *) reverseJSONString:(NSError **) error;
+
+/**
+ Converts the current instance object into a JSON String using the mapping dictionary for the object.
+ 
+ @discussion If a property is `nil`, an NSNull object will be created for it in the JSON string returned.
+ @return A `NSString` object formatted as JSON, with the values for the properties of the instance.
+ @see -dictionary
+ */
 - (NSString *) reverseJSONString;
 
 /**
@@ -179,6 +218,13 @@
  @see -JSONString
  */
 - (NSString *) JSONStringForNonNilProperties:(NSError **) error;
+
+/**
+ Converts the current instance object into a JSON String.
+ 
+ @return A `NSString` object formatted as JSON, with the values for the properties of the instance, excluding NSNull objects.
+ @see -JSONString
+ */
 - (NSString *) JSONStringForNonNilProperties;
 
 /**
