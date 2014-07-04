@@ -48,7 +48,7 @@
  @example OSRKeyPath(self, view.superview)
  @example OSRKeyPath(UIViewController *, view.superview)
  */
-#define OSRKeyPath(OBJ, PATH) ((void)(0 && ((void)({__typeof(OBJ) OSR_ghost_ ## __COUNTER__; OSR_ghost_ ## __COUNTER__.PATH;}), 0)), @#PATH)
+#define OSRKeyPath(OBJ, PATH) ((void)(0 && ((void)({__typeof(OBJ) OSR_ghost_obj; OSR_ghost_obj.PATH;}), 0)), @#PATH)
 
 /**
  Marks a key path as needing to be transformed with -[reflectionTransformsValue:forKey:] when creating from a dictionary. It is suggested to be used in tandem with the OSRKeyPath macro.
@@ -71,7 +71,7 @@
  
  @example OSRAdapt(OSRKeyPath(TYSUser*, xp), TYSXP)
  */
-#define OSRAdapt(KEYPATH, TARGET_CLASS_NAME) ((void)(0 && ((void)({__typeof(TARGET_CLASS_NAME) *OSR_ghost_ ## __COUNTER__ __attribute__((unused));}), 0)), [(KEYPATH) stringByAppendingString:@",<"#TARGET_CLASS_NAME">"])
+#define OSRAdapt(KEYPATH, TARGET_CLASS_NAME) ((void)(0 && ((void)({__typeof(TARGET_CLASS_NAME) *OSR_ghost_obj __attribute__((unused));}), 0)), [(KEYPATH) stringByAppendingString:@",<"#TARGET_CLASS_NAME">"])
 
 
 @interface NSObject (OSReflectionKit) <NSCopying, NSCoding>
