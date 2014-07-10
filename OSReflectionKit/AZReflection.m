@@ -90,8 +90,19 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 	}
 
 	id instance = nil;
-	
-	BOOL classHasProtocolFactoryMethod = class_conformsToProtocol(classReference, @protocol(AZReflectionHint)) && [(id)classReference respondsToSelector:@selector(reflectionNewInstanceWithDictionary:)];
+
+	BOOL classHasProtocolFactoryMethod = NO;
+
+	for (Class classReferenceHierarchy = classReference; classReferenceHierarchy != Nil; classReferenceHierarchy = class_getSuperclass(classReferenceHierarchy)) {
+		if (class_conformsToProtocol(classReferenceHierarchy, @protocol(AZReflectionHint))) {
+			classHasProtocolFactoryMethod = [(id)classReference respondsToSelector:@selector(reflectionNewInstanceWithDictionary:)];
+
+			if (classHasProtocolFactoryMethod) {
+				break;
+			}
+		}
+	}
+
 	// Can we use class as instance factory?
 	if (classHasProtocolFactoryMethod) {
 		instance = [classReference reflectionNewInstanceWithDictionary:dictionary];
@@ -122,7 +133,7 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
     {
 		mapping = [classReference reflectionMapping];
 	}
-	
+
 	// Now iterate through all key/value pairs
 	[dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id obj, BOOL *stop) {
         
@@ -419,6 +430,13 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 			{
                 NSDate *date = [self dateFromValue:value];
 				[instance setValue:date forKey:key];
+			}
+			else if ([[NSURL class] isEqual:attributes->classReference] && [value isKindOfClass:[NSString class]]) {
+                NSURL *url = [NSURL URLWithString:value];
+				[instance setValue:url forKey:key];
+			}
+			else if ([instance isKindOfClass:NSClassFromString(@"NSManagedObject")]) {
+				[instance setValue:value forKey:key];
 			}
 		}
 	};
@@ -750,6 +768,55 @@ static const char * getPropertyType(objc_property_t property) {
 	}
     
     return nil;
+}
+
++ (BOOL)propertyName:(NSString *)propertyName isPrimitiveOrNumberPropertyOfClass:(Class)instanceClass
+{
+	const char *keyChar = [propertyName UTF8String];
+	objc_property_t property = class_getProperty(instanceClass, keyChar);
+	struct property_attributes_t attributes = {0};
+
+	if (property) {
+		GetPropertyClassWrapper(property, &attributes);
+		if (attributes.valid) {
+			return attributes.primitive || attributes.classReference == [NSNumber class];
+		}
+	}
+
+	Ivar ivar = class_getInstanceVariable(instanceClass, keyChar);
+	if (ivar) {
+		GetIvarClassWrapper(ivar, &attributes);
+		if (attributes.valid) {
+			return attributes.primitive || attributes.classReference == [NSNumber class];
+		}
+	}
+
+	return NO;
+}
+
++ (NSNumber *)numberFromNumericValueString:(NSString *)value targetPropertyName:(NSString *)propertyName ofClass:(Class)klass
+{
+	const char *keyChar = [propertyName UTF8String];
+
+	// Check for property
+	objc_property_t property = class_getProperty(klass, keyChar);
+	struct property_attributes_t attributes;
+	if (property) {
+		GetPropertyClassWrapper(property, &attributes);
+		if (attributes.valid) {
+			return [[AZReflection sharedReflectionMapper] parsedNumberFromNumericValueString:value attributes:&attributes];
+		}
+	}
+
+	Ivar ivar = class_getInstanceVariable(klass, keyChar);
+	if (ivar) {
+		GetIvarClassWrapper(ivar, &attributes);
+		if (attributes.valid) {
+			return [[AZReflection sharedReflectionMapper] parsedNumberFromNumericValueString:value attributes:&attributes];
+		}
+	}
+
+	return nil;
 }
 
 - (BOOL) setValue:(id) value forProperty:(NSString *) propertyName

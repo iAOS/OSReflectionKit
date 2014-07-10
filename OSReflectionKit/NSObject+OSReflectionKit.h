@@ -74,7 +74,10 @@
 #define OSRAdapt(KEYPATH, TARGET_CLASS_NAME) ((void)(0 && ((void)({__typeof(TARGET_CLASS_NAME) *OSR_ghost_obj __attribute__((unused));}), 0)), [(KEYPATH) stringByAppendingString:@",<"#TARGET_CLASS_NAME">"])
 
 
-@interface NSObject (OSReflectionKit) <NSCopying, NSCoding>
+@interface NSObject (OSReflectionKit)
+#ifdef TROUBLE
+<NSCopying, NSCoding>
+#endif
 
 ///-----------------------------
 /// @name Instantiation Methods

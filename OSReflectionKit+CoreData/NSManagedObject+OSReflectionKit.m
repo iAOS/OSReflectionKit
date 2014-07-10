@@ -57,6 +57,24 @@ static NSManagedObjectContext *_defaultContext = nil;
     return [NSEntityDescription entityForName:[self entityName] inManagedObjectContext:[self defaultManagedObjectContext]];
 }
 
+#pragma mark - Reflection exceptions
+
+- (void)reflectionValue:(id)value forUnkownKey:(NSString *)key
+{
+	@try {
+		@throw [NSException exceptionWithName:@"OSRValueAssignmentException" reason:@"Could not assign" userInfo:@{@"Key" : key, @"Value" : value ?: [NSNull null]}];
+	}
+	@catch (...) {}
+}
+
+- (void)reflectionMappingError:(NSError *)error withValue:(id)value forKey:(NSString *)propertyName
+{
+	@try {
+		@throw [NSException exceptionWithName:@"OSRMappingException" reason:@"Could not map" userInfo:@{@"Key" : propertyName, @"Value" : value ?: [NSNull null], NSUnderlyingErrorKey : error}];
+	}
+	@catch (...) {}
+}
+
 #pragma mark - Instance Properties
 
 - (BOOL) isSaved
@@ -77,6 +95,11 @@ static NSManagedObjectContext *_defaultContext = nil;
 }
 
 #pragma mark - Instanciation Methods
+
++ (instancetype)reflectionNewInstanceWithDictionary:(NSDictionary *)dictionary
+{
+	return [self objectFromDictionary:dictionary];
+}
 
 + (instancetype)objectFromDictionary:(NSDictionary *)dictionary
 {
@@ -288,10 +311,10 @@ static NSManagedObjectContext *_defaultContext = nil;
         if(predicate)
         {
             request.predicate = predicate;
+
+			NSError *error = nil;
+			objects = [context executeFetchRequest:request error:&error];
         }
-        
-        NSError *error = nil;
-        objects = [context executeFetchRequest:request error:&error];
     }
     
     return objects;

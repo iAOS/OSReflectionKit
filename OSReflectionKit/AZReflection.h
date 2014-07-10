@@ -60,6 +60,9 @@ extern NSString *const AZReflectionMapperErrorDomain;
 // Properties Methods
 + (NSDictionary *) classProperties;
 + (Class) classForProperty:(NSString *) propertyName;
++ (BOOL)propertyName:(NSString *)propertyName isPrimitiveOrNumberPropertyOfClass:(Class)instanceClass;
++ (NSNumber *)numberFromNumericValueString:(NSString *)value targetPropertyName:(NSString *)propertyName ofClass:(Class)klass;
 - (BOOL) setValue:(id) value forProperty:(NSString *) propertyName;
 - (BOOL) setValue:(id) value forProperty:(NSString *) propertyName error:(NSError **) error;
+
 @end
