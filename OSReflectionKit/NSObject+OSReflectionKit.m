@@ -23,7 +23,7 @@
     return [[self alloc] init];
 }
 
-+ (id) objectFromDictionary:(NSDictionary *) dictionary
++ (instancetype) objectFromDictionary:(NSDictionary *) dictionary
 {
     return [self reflectionMapWithDictionary:dictionary error:nil];
 }

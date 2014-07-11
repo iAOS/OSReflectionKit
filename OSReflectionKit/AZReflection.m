@@ -161,28 +161,30 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
         {
 			// we might have a mapping function
 			NSString *mappingHint = [mapping valueForKey:key];
-			BOOL usesTransformer = NO;
-			NSString *customClassString = nil;
-			ParseMappingHint(mappingHint, &key, &usesTransformer, &customClassString);
-			if (usesTransformer && [instance respondsToSelector:@selector(reflectionTranformsValue:forKey:)])
-            {
-				[instance reflectionTranformsValue:obj forKey:key];
-			}
-            else
-            {
-				if(![self assignValue:obj instance:instance key:key propertyClass:NSClassFromString(customClassString) error:error])
-                {
-                    success = NO;
-                    
-                    if([instance respondsToSelector:@selector(reflectionMappingError:withValue:forKey:)])
-                    {
-                        [instance reflectionMappingError:*error withValue:obj forKey:key];
-                    }
-                }
+			if ((id)[NSNull null] != mappingHint) {
+				BOOL usesTransformer = NO;
+				NSString *customClassString = nil;
+				ParseMappingHint(mappingHint, &key, &usesTransformer, &customClassString);
+				if (usesTransformer && [instance respondsToSelector:@selector(reflectionTranformsValue:forKey:)])
+				{
+					[instance reflectionTranformsValue:obj forKey:key];
+				}
+				else
+				{
+					if(![self assignValue:obj instance:instance key:key propertyClass:NSClassFromString(customClassString) error:error])
+					{
+						success = NO;
+
+						if([instance respondsToSelector:@selector(reflectionMappingError:withValue:forKey:)])
+						{
+							[instance reflectionMappingError:*error withValue:obj forKey:key];
+						}
+					}
+				}
 			}
 		}
 	}];
-    
+
     return success;
 }
 

@@ -32,7 +32,9 @@
 			NSMutableArray *allUnmappedKeysMutable = [[reflectionMapping allValues] mutableCopy];
 
 			for (NSUInteger index = 0; index < [allUnmappedKeysMutable count]; index++) {
-				allUnmappedKeysMutable[index] = [[allUnmappedKeysMutable[index] componentsSeparatedByString:@","] firstObject];
+				if ((id)[NSNull null] != allUnmappedKeysMutable[index]) {
+					allUnmappedKeysMutable[index] = [[allUnmappedKeysMutable[index] componentsSeparatedByString:@","] firstObject];
+				}
 			}
 
 			NSSet *allUnmappedKeysSet = [NSSet setWithArray:allUnmappedKeysMutable];
