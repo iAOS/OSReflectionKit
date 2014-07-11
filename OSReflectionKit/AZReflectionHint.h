@@ -16,7 +16,7 @@
 /**
  Custom factory method, should return fully initialized instance of the class
  */
-+ (id)reflectionNewInstanceWithDictionary:(NSDictionary *)dictionary;
++ (instancetype)reflectionNewInstanceWithDictionary:(NSDictionary *)dictionary;
 
 /**
  Returns dictionary containing hints for the mapping process

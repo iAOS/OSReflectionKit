@@ -23,7 +23,7 @@
     return [[self alloc] init];
 }
 
-+ (id) objectFromDictionary:(NSDictionary *) dictionary
++ (instancetype) objectFromDictionary:(NSDictionary *) dictionary
 {
     return [self reflectionMapWithDictionary:dictionary error:nil];
 }
@@ -322,6 +322,8 @@
     return [[self dictionary] description];
 }
 
+
+#ifdef TROUBLE
 #pragma mark - NSCopying implementation
 
 - (id)copyWithZone:(NSZone *)zone
@@ -361,5 +363,7 @@
     
     return self;
 }
+
+#endif
 
 @end

@@ -33,7 +33,7 @@
 #import <CoreData/CoreData.h>
 #import "NSObject+OSReflectionKit.h"
 
-@interface NSManagedObject (OSReflectionKit)
+@interface NSManagedObject (OSReflectionKit) <AZReflectionHint>
 
 #pragma mark - Properties
 

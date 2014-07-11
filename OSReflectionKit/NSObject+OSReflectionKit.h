@@ -35,7 +35,49 @@
 
 // This category allows any NSObject to be instantiated using an NSDictiony object. Also adds some reflection methods to the NSObject, like listing properties and getting the property type
 
-@interface NSObject (OSReflectionKit) <NSCopying, NSCoding>
+// The following macros are quite useful for building the +[reflectionMapping] dictionary and to verify the incoming property name in -[reflectionTranformsValue:forKey:].
+
+/**
+ Builds an NSString to express a key path.
+ 
+ @param OBJ  Root object or object type. Used as a template only.
+ @param PATH A chain of properties
+ 
+ @return NSString expressing a key path reachable from some instance of the same type of the root object
+
+ @example OSRKeyPath(self, view.superview)
+ @example OSRKeyPath(UIViewController *, view.superview)
+ */
+#define OSRKeyPath(OBJ, PATH) ((void)(0 && ((void)({__typeof(OBJ) OSR_ghost_obj; OSR_ghost_obj.PATH;}), 0)), @#PATH)
+
+/**
+ Marks a key path as needing to be transformed with -[reflectionTransformsValue:forKey:] when creating from a dictionary. It is suggested to be used in tandem with the OSRKeyPath macro.
+ 
+ @param KEYPATH A key path
+ 
+ @return A string flagging the key path as needing transformation
+ 
+ @example OSRTransform(OSRKeyPath(TYSUser*, picture))
+ */
+#define OSRTransform(KEYPATH) ([(KEYPATH) stringByAppendingString:@",*"])
+
+/**
+ Marks a key path as needing instantiation with -[objectFromDictionary:] when the parent ovject is created from a dictionary. It is suggested to be used in tandem with the OSRKeyPath macro.
+ 
+ @param KEYPATH           A key path
+ @param TARGET_CLASS_NAME The target class name
+ 
+ @return A string flagging the key path as needing to be instantiated with -[objectFromDictionary:]
+ 
+ @example OSRAdapt(OSRKeyPath(TYSUser*, xp), TYSXP)
+ */
+#define OSRAdapt(KEYPATH, TARGET_CLASS_NAME) ((void)(0 && ((void)({__typeof(TARGET_CLASS_NAME) *OSR_ghost_obj __attribute__((unused));}), 0)), [(KEYPATH) stringByAppendingString:@",<"#TARGET_CLASS_NAME">"])
+
+
+@interface NSObject (OSReflectionKit)
+#ifdef TROUBLE
+<NSCopying, NSCoding>
+#endif
 
 ///-----------------------------
 /// @name Instantiation Methods

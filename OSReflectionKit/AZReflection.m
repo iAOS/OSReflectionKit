@@ -19,12 +19,6 @@
 
 @interface AZReflection ()
 
-// Shortcut NSError factory
-static inline NSError *ReflectionMapperError(NSString *errorMessage, ...);
-
-// Method performs type strict assignment
-- (BOOL)assignValue:(id)value instance:(id)instance key:(NSString *)key propertyClass:(Class)propertyClass error:(NSError **)error;
-
 // Structure encapsulating all information about property class
 // (can't use) just a Class since we can have primitive classes as well
 struct property_attributes_t {
@@ -38,6 +32,20 @@ struct property_attributes_t {
 	SEL primitiveValueSelector;
 };
 
+@property (nonatomic, readonly) NSNumberFormatter *numberFormatter;
+@property (nonatomic, readonly) NSDateFormatter *dateFormatterForShortFormat;
+@property (nonatomic, readonly) NSDateFormatter *dateFormatterForMediumFormat;
+@property (nonatomic, readonly) NSDateFormatter *dateFormatterForLongFormat;
+
+// Shortcut NSError factory
+static inline NSError *ReflectionMapperError(NSString *errorMessage, ...);
+
+// Method to extract NSNumbers from numeric values expressed as NSStrings
+- (NSNumber *)parsedNumberFromNumericValueString:(NSString *)value attributes:(const struct property_attributes_t * const)attributes;
+
+// Method performs type strict assignment
+- (BOOL)assignValue:(id)value instance:(id)instance key:(NSString *)key propertyClass:(Class)propertyClass error:(NSError **)error;
+
 // Functions extract information about the property / ivar, so we can be sure that value is the same type as property
 static inline void GetPropertyClassWrapper(objc_property_t property, struct property_attributes_t *answer);
 static inline void GetIvarClassWrapper(Ivar ivar, struct property_attributes_t *answer);
@@ -50,6 +58,16 @@ static inline void ParseReverseMappingHint(NSDictionary *mapping, NSString *prop
 @end
 
 @implementation AZReflection
+
+@dynamic numberFormatter;
+@dynamic dateFormatterForShortFormat;
+@dynamic dateFormatterForMediumFormat;
+@dynamic dateFormatterForLongFormat;
+
+static NSNumberFormatter *_numberFormatter = nil;
+static NSDateFormatter *_dateFormatterForShortFormat = nil;
+static NSDateFormatter *_dateFormatterForMediumFormat = nil;
+static NSDateFormatter *_dateFormatterForLongFormat = nil;
 
 NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain";
 
@@ -72,8 +90,19 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 	}
 
 	id instance = nil;
-	
-	BOOL classHasProtocolFactoryMethod = class_conformsToProtocol(classReference, @protocol(AZReflectionHint)) && [(id)classReference respondsToSelector:@selector(reflectionNewInstanceWithDictionary:)];
+
+	BOOL classHasProtocolFactoryMethod = NO;
+
+	for (Class classReferenceHierarchy = classReference; classReferenceHierarchy != Nil; classReferenceHierarchy = class_getSuperclass(classReferenceHierarchy)) {
+		if (class_conformsToProtocol(classReferenceHierarchy, @protocol(AZReflectionHint))) {
+			classHasProtocolFactoryMethod = [(id)classReference respondsToSelector:@selector(reflectionNewInstanceWithDictionary:)];
+
+			if (classHasProtocolFactoryMethod) {
+				break;
+			}
+		}
+	}
+
 	// Can we use class as instance factory?
 	if (classHasProtocolFactoryMethod) {
 		instance = [classReference reflectionNewInstanceWithDictionary:dictionary];
@@ -104,7 +133,7 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
     {
 		mapping = [classReference reflectionMapping];
 	}
-	
+
 	// Now iterate through all key/value pairs
 	[dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id obj, BOOL *stop) {
         
@@ -132,28 +161,30 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
         {
 			// we might have a mapping function
 			NSString *mappingHint = [mapping valueForKey:key];
-			BOOL usesTransformer = NO;
-			NSString *customClassString = nil;
-			ParseMappingHint(mappingHint, &key, &usesTransformer, &customClassString);
-			if (usesTransformer && [instance respondsToSelector:@selector(reflectionTranformsValue:forKey:)])
-            {
-				[instance reflectionTranformsValue:obj forKey:key];
-			}
-            else
-            {
-				if(![self assignValue:obj instance:instance key:key propertyClass:NSClassFromString(customClassString) error:error])
-                {
-                    success = NO;
-                    
-                    if([instance respondsToSelector:@selector(reflectionMappingError:withValue:forKey:)])
-                    {
-                        [instance reflectionMappingError:*error withValue:obj forKey:key];
-                    }
-                }
+			if ((id)[NSNull null] != mappingHint) {
+				BOOL usesTransformer = NO;
+				NSString *customClassString = nil;
+				ParseMappingHint(mappingHint, &key, &usesTransformer, &customClassString);
+				if (usesTransformer && [instance respondsToSelector:@selector(reflectionTranformsValue:forKey:)])
+				{
+					[instance reflectionTranformsValue:obj forKey:key];
+				}
+				else
+				{
+					if(![self assignValue:obj instance:instance key:key propertyClass:NSClassFromString(customClassString) error:error])
+					{
+						success = NO;
+
+						if([instance respondsToSelector:@selector(reflectionMappingError:withValue:forKey:)])
+						{
+							[instance reflectionMappingError:*error withValue:obj forKey:key];
+						}
+					}
+				}
 			}
 		}
 	}];
-    
+
     return success;
 }
 
@@ -215,6 +246,107 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
     return [dictionary copy];
 }
 
+- (NSNumberFormatter *)numberFormatter
+{
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		_numberFormatter = [[NSNumberFormatter alloc] init];
+		[_numberFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+	});
+
+	return _numberFormatter;
+}
+
+- (NSDateFormatter *)dateFormatterForShortFormat
+{
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		_dateFormatterForShortFormat = [[NSDateFormatter alloc] init];
+		[_dateFormatterForShortFormat setDateFormat:@"yyyy-MM-dd"];
+	});
+
+	return _dateFormatterForShortFormat;
+}
+
+- (NSDateFormatter *)dateFormatterForMediumFormat
+{
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		_dateFormatterForMediumFormat = [[NSDateFormatter alloc] init];
+		[_dateFormatterForMediumFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	});
+
+	return _dateFormatterForMediumFormat;
+}
+
+- (NSDateFormatter *)dateFormatterForLongFormat
+{
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		_dateFormatterForLongFormat = [[NSDateFormatter alloc] init];
+		[_dateFormatterForLongFormat setDateFormat:@"yyyy-MM-dd'T'HHmmssZZ"];
+	});
+
+	return _dateFormatterForLongFormat;
+}
+
+- (NSNumber *)parsedNumberFromNumericValueString:(NSString *)value attributes:(const struct property_attributes_t * const)attributes
+{
+	NSNumber *convertedValue = nil;
+
+	SEL primitiveValueSelector = attributes->primitiveValueSelector;
+
+	// Try native NSString number parsing first
+	if ([value respondsToSelector:primitiveValueSelector])
+	{
+		NSString *selectorAsString = NSStringFromSelector(primitiveValueSelector);
+		convertedValue = [value valueForKeyPath:selectorAsString];
+	}
+	else
+	{
+		convertedValue = [self.numberFormatter numberFromString:value];
+	}
+
+	if (!convertedValue)
+	{
+		convertedValue = @0;
+	}
+
+	return convertedValue;
+}
+
+- (NSDate *)dateFromValue:(id)value
+{
+	NSDateFormatter* formatter = nil;
+	NSDate *date = nil;
+	
+	if ([value isKindOfClass:[NSNumber class]])
+	{
+		date = [NSDate dateWithTimeIntervalSince1970:[value doubleValue]];
+	}
+	else if ([value isKindOfClass:[NSString class]])
+	{
+		if ([value length]) {
+			NSString *dateString = value;
+
+			if (8 <= [value length] && [value length] <= 10)
+				formatter = self.dateFormatterForShortFormat;
+			else if ([value length] <= 19)
+				formatter = self.dateFormatterForMediumFormat;
+			else
+			{
+				// Ruby on Rails compatibility for date formatted like: 2011-07-20T23:59:00-07:00
+				dateString = [dateString stringByReplacingOccurrencesOfString:@":" withString:@""];
+				formatter = self.dateFormatterForLongFormat;
+			}
+
+			date = [formatter dateFromString:dateString];
+		}
+	}
+
+	return date;
+}
+
 - (BOOL)assignValue:(id)value instance:(id)instance key:(NSString *)key propertyClass:(Class)propertyClass error:(NSError **)error
 {
 	const char *keyChar = [key UTF8String];
@@ -223,7 +355,7 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 	BOOL instanceImplementsUnknownKey = [instance respondsToSelector:@selector(reflectionValue:forUnkownKey:)];
     BOOL instanceImplementsMappingError = [instance respondsToSelector:@selector(reflectionMappingError:withValue:forKey:)];
 	
-	void(^assignmentBlock)(struct property_attributes_t attributes) = ^(struct property_attributes_t attributes){
+	void(^assignmentBlock)(const struct property_attributes_t * const attributes) = ^(const struct property_attributes_t * const attributes){
 
 		// Actual value assigning happens here
 		if ([value isKindOfClass:[NSDictionary class]]) {
@@ -245,7 +377,7 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
                 id objValue = array;
                 
                 // Convert the NSArray into NSSet according to the property type
-                if([[[instance class] classForProperty:key] isSubclassOfClass:[NSSet class]])
+                if ([[[instance class] classForProperty:key] isSubclassOfClass:[NSSet class]])
                 {
                     objValue = [NSSet setWithArray:array];
                 }
@@ -255,7 +387,7 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
                 id objValue = value;
                 
                 // Convert the NSArray into NSSet according to the property type
-                if([[[instance class] classForProperty:key] isSubclassOfClass:[NSSet class]])
+                if ([[[instance class] classForProperty:key] isSubclassOfClass:[NSSet class]])
                 {
                     objValue = [NSSet setWithArray:value];
                 }
@@ -264,42 +396,49 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 			}
 		} else {
 			// check types 
-			if (attributes.primitive && [value isKindOfClass:[NSValue class]]) {
-				// primitive values are expected to be wrapped into NSNumber or NSValue
+			if (attributes->primitive)
+			{
+				if ([value isKindOfClass:[NSValue class]])
+				{
+					// primitive values are expected to be wrapped into NSNumber or NSValue
+					[instance setValue:value forKey:key];
+				}
+				else if ([value isKindOfClass:[NSString class]])
+				{
+					NSNumber *numberValue = [self parsedNumberFromNumericValueString:value attributes:attributes];
+					[instance setValue:numberValue forKey:key];
+				}
+				else if (!value)
+				{
+					// primitive values are expected to be wrapped into NSNumber or NSValue
+					[instance setValue:@0 forKey:key];
+				}
+				else
+				{
+					*error = ReflectionMapperError(@"Could not parse value: %@", value);
+					[instance setValue:nil forKey:key];
+				}
+			}
+			else if ([value isKindOfClass:[NSString class]] && [attributes->classReference isSubclassOfClass:[NSNumber class]])
+			{
+				NSNumber *numberValue = [self parsedNumberFromNumericValueString:value attributes:attributes];
+				[instance setValue:numberValue forKey:key];
+			}
+			else if (!value || [value isKindOfClass:attributes->classReference])
+			{
 				[instance setValue:value forKey:key];
-			} else if (!value && attributes.primitive) {
-                // primitive values are expected to be wrapped into NSNumber or NSValue
-				[instance setValue:@0 forKey:key];
-			} else if (!value || [value isKindOfClass:attributes.classReference]) {
+			}
+			else if ([[NSDate class] isEqual:attributes->classReference])
+			{
+                NSDate *date = [self dateFromValue:value];
+				[instance setValue:date forKey:key];
+			}
+			else if ([[NSURL class] isEqual:attributes->classReference] && [value isKindOfClass:[NSString class]]) {
+                NSURL *url = [NSURL URLWithString:value];
+				[instance setValue:url forKey:key];
+			}
+			else if ([instance isKindOfClass:NSClassFromString(@"NSManagedObject")]) {
 				[instance setValue:value forKey:key];
-			} else if ([NSDate class] == attributes.classReference) {
-                NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
-                
-                if ([value isKindOfClass:[NSNumber class]])
-                {
-                    NSDate* date;
-                    date = [NSDate dateWithTimeIntervalSince1970:[value doubleValue]];
-                    
-                    [instance setValue:date forKey:key];
-                }
-                else if ([value isKindOfClass:[NSString class]])
-                {
-                    NSString *dateString = value;
-                    
-                    if ([value length] == 10)
-                        [formatter setDateFormat:@"yyyy-MM-dd"];
-                    else if ([value length] <= 19)
-                        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-                    else
-                    {
-                        // Ruby on Rails compatibility for date formatted like: 2011-07-20T23:59:00-07:00
-                        dateString = [value stringByReplacingOccurrencesOfString:@":" withString:@""];
-                        [formatter setDateFormat:@"yyyy-MM-dd'T'HHmmssZZ"];
-                    }
-                    
-                    [instance setValue:[formatter dateFromString:dateString] forKey:key];
-                }
-            
 			}
 		}
 	};
@@ -311,7 +450,7 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 		GetPropertyClassWrapper(property, &attributes);
 		
 		if (attributes.valid && !attributes.readonly) {
-			assignmentBlock(attributes);
+			assignmentBlock(&attributes);
             return YES;
 		}
 		else if(instanceImplementsMappingError)
@@ -325,7 +464,7 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 	if (ivar) {
 		GetIvarClassWrapper(ivar, &attributes);
 		if (attributes.valid) {
-			assignmentBlock(attributes);			
+			assignmentBlock(&attributes);
 			return YES;
 		}
 		else if(instanceImplementsMappingError)
@@ -631,6 +770,55 @@ static const char * getPropertyType(objc_property_t property) {
 	}
     
     return nil;
+}
+
++ (BOOL)propertyName:(NSString *)propertyName isPrimitiveOrNumberPropertyOfClass:(Class)instanceClass
+{
+	const char *keyChar = [propertyName UTF8String];
+	objc_property_t property = class_getProperty(instanceClass, keyChar);
+	struct property_attributes_t attributes = {0};
+
+	if (property) {
+		GetPropertyClassWrapper(property, &attributes);
+		if (attributes.valid) {
+			return attributes.primitive || attributes.classReference == [NSNumber class];
+		}
+	}
+
+	Ivar ivar = class_getInstanceVariable(instanceClass, keyChar);
+	if (ivar) {
+		GetIvarClassWrapper(ivar, &attributes);
+		if (attributes.valid) {
+			return attributes.primitive || attributes.classReference == [NSNumber class];
+		}
+	}
+
+	return NO;
+}
+
++ (NSNumber *)numberFromNumericValueString:(NSString *)value targetPropertyName:(NSString *)propertyName ofClass:(Class)klass
+{
+	const char *keyChar = [propertyName UTF8String];
+
+	// Check for property
+	objc_property_t property = class_getProperty(klass, keyChar);
+	struct property_attributes_t attributes;
+	if (property) {
+		GetPropertyClassWrapper(property, &attributes);
+		if (attributes.valid) {
+			return [[AZReflection sharedReflectionMapper] parsedNumberFromNumericValueString:value attributes:&attributes];
+		}
+	}
+
+	Ivar ivar = class_getInstanceVariable(klass, keyChar);
+	if (ivar) {
+		GetIvarClassWrapper(ivar, &attributes);
+		if (attributes.valid) {
+			return [[AZReflection sharedReflectionMapper] parsedNumberFromNumericValueString:value attributes:&attributes];
+		}
+	}
+
+	return nil;
 }
 
 - (BOOL) setValue:(id) value forProperty:(NSString *) propertyName
