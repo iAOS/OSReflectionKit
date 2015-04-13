@@ -159,58 +159,76 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 
 - (NSDictionary *) dictionaryForObject:(id) instance error:(NSError **)error
 {
-	// Do we have any hints implemented?
+    // Do we have any hints implemented?
     Class classReference = [instance class];
-	NSDictionary *mapping = nil;
-	if ([(id)classReference respondsToSelector:@selector(reflectionMapping)])
+    NSDictionary *mapping = nil;
+    if ([(id)classReference respondsToSelector:@selector(reflectionMapping)])
     {
-		mapping = [classReference reflectionMapping];
-	}
-
+        mapping = [classReference reflectionMapping];
+    }
+    
     NSDictionary *classProperties = [classReference classProperties];
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:[classProperties count]];
-	// Now iterate through all key/value pairs
-	[classProperties enumerateKeysAndObjectsUsingBlock:^(NSString *propertyName, id propertyType, BOOL *stop) {
+    // Now iterate through all key/value pairs
+    [classProperties enumerateKeysAndObjectsUsingBlock:^(NSString *propertyName, id propertyType, BOOL *stop) {
         
         id obj = [instance valueForKey:propertyName];
         
-		// Due to language limitations we can't store nil in the dictionary,
-		// that's why obj-c uses artificial [NSNull null] to accomodate
-		if (obj == nil)
+        // Due to language limitations we can't store nil in the dictionary,
+        // that's why obj-c uses artificial [NSNull null] to accomodate
+        if (obj == nil)
         {
-			obj = [NSNull null];
-		}
-
+            obj = [NSNull null];
+        }
+        
         // we might have a mapping function
         NSString *customClassString = nil;
         NSString *key = nil;
         BOOL usesTransformer = NO;
         ParseReverseMappingHint(mapping, propertyName, &key, &customClassString, &usesTransformer);
         
-		if (key)
+        if (key)
         {
             if(customClassString)
             {
                 // Complex property
                 NSError *error = nil;
-                NSDictionary *subObject = [self dictionaryForObject:obj error:&error];
-                
-                if(subObject)
-                    [dictionary setObject:subObject forKey:key];
-                else
-                    NSLog(@"Error while serializing object: %@ : Error: %@", obj, [error localizedDescription]);
+                // Check for a collection of items
+                if([obj isKindOfClass:[NSArray class]] || [obj isKindOfClass:[NSSet class]]) {
+                    NSMutableArray *subObjects = [NSMutableArray arrayWithCapacity:[(NSArray *)obj count]];
+                    for (id item in obj) {
+                        NSDictionary *subObject = [self dictionaryForObject:item error:&error];
+                        if(subObject) {
+                            [subObjects addObject:subObject];
+                        }
+                        else {
+                            NSLog(@"Error while serializing object: %@ : Error: %@", obj, [error localizedDescription]);
+                        }
+                    }
+                    [dictionary setObject:[subObjects copy] forKey:key];
+                }
+                else {
+                    NSDictionary *subObject = [self dictionaryForObject:obj error:&error];
+                    
+                    if(subObject) {
+                        [dictionary setObject:subObject forKey:key];
+                    }
+                    else {
+                        NSLog(@"Error while serializing object: %@ : Error: %@", obj, [error localizedDescription]);
+                    }
+                }
             }
             else
-            {        
+            {
                 [dictionary setObject:obj forKey:key];
             }
-		}
+        }
         else
         {
-			// assign directly to the dictionary
+            // assign directly to the dictionary
             [dictionary setObject:obj forKey:propertyName];
-		}
-	}];
+        }
+    }];
     
     return [dictionary copy];
 }
