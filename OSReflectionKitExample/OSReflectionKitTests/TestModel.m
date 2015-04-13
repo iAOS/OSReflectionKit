@@ -44,7 +44,8 @@
              @"integer":@(20),
              @"floating":@(4.53),
              @"date":@"2014-02-14",
-             @"nestedModel":@{@"nestedString":@"testing nested string", @"nestedNumber":@(39)}};
+             @"nestedModel":@{@"nestedString":@"testing nested string", @"nestedNumber":@(39)},
+             @"decimalNumber":@"10.99"};
 }
 
 + (NSDictionary *) specialMockDictionary
@@ -57,7 +58,8 @@
              @"integer":@(20),
              @"floating":@(4.53),
              @"date":@"2014-02-14",
-             @"nestedModel":@{@"nestedString":@"testing nested string", @"nestedNumber":@(39)}};
+             @"nestedModel":@{@"nestedString":@"testing nested string", @"nestedNumber":@(39)},
+             @"decimalNumber":@"10.99"};
 }
 
 @end

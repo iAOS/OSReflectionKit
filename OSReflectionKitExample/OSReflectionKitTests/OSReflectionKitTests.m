@@ -184,6 +184,7 @@
     XCTAssertEqualObjects(model.set, set, @"model.set should be equal to '{2, 3, 4}'");
     NSDictionary *dictionary = @{@"stringTestKey":@"testValue", @"numberTestKey":@(5.3)};
     XCTAssertEqualObjects(model.dict, dictionary, @"model.dict should be equal to '{\"stringTestKey\":\"testValue\", \"numberTestKey\":5.3}'");
+    XCTAssertEqualObjects(model.decimalNumber, [NSDecimalNumber decimalNumberWithMantissa:1099 exponent:-2 isNegative:NO], @"model.decimalNumber should be equal to '10.99'");
     
     // Nested objects
     XCTAssertEqualObjects(model.nestedModel.nestedString, @"testing nested string", @"model.nestedModel.nestedString should be equal to 'testing nested string'");

@@ -223,6 +223,12 @@
         [dictionary setObject:[set allObjects] forKey:propertyName];
     }];
     
+    // Convert NSDecimalNumber to NSString in order to serialize to JSON
+    [self enumeratePropertiesWithClass:[NSDecimalNumber class] usingBlock:^(NSString *propertyName, id objectValue) {
+        NSDecimalNumber *decimalNumber = objectValue;
+        [dictionary setObject:[decimalNumber stringValue] forKey:propertyName];
+    }];
+    
     NSArray *allKeys = [dictionary allKeys];
     
     // Valid Classes: NSString, NSNumber, NSArray, NSDictionary, or NSNull

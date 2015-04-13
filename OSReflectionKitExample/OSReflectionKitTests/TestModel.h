@@ -18,6 +18,7 @@
 @property (nonatomic, strong) NSSet *set;
 @property (nonatomic, strong) NSDictionary *dict;
 @property (nonatomic, strong) NSDate *date;
+@property (nonatomic, strong) NSDecimalNumber *decimalNumber;
 
 // Custom Nested NSObjects
 

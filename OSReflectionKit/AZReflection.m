@@ -299,8 +299,12 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
                     
                     [instance setValue:[formatter dateFromString:dateString] forKey:key];
                 }
-            
 			}
+            else if ([NSDecimalNumber class] == attributes.classReference) {
+                if([value isKindOfClass:[NSString class]]) {
+                    [instance setValue:[NSDecimalNumber decimalNumberWithString:value] forKey:key];
+                }
+            }
 		}
 	};
 
