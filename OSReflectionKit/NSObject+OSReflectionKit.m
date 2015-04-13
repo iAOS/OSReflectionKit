@@ -151,7 +151,7 @@
     for(NSString *property in propertyNames)
     {
         NSObject *value = nil;
-
+        
         value = [self valueForKey:property];
         
         // Sets a NSNull object case the value is nil in order to assure the same amount of items than found in the properties array
@@ -208,48 +208,68 @@
     
     // In some cases, like for JSON, which does not accept date objects, we need to convert all NSDate objects to strings first
     NSDateFormatter *df = [[NSDateFormatter alloc] init];
-
+    
     // TODO: Allow to set the date format
     [df setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
-    
-    [self enumeratePropertiesWithClass:[NSDate class] usingBlock:^(NSString *propertyName, id objectValue) {
-        NSString *dateString = [df stringFromDate:objectValue];
-        [dictionary setObject:dateString forKey:propertyName];
-    }];
-    
-    // Convert NSSet to NSArray in order to serialize to JSON
-    [self enumeratePropertiesWithClass:[NSSet class] usingBlock:^(NSString *propertyName, id objectValue) {
-        NSSet *set = objectValue;
-        [dictionary setObject:[set allObjects] forKey:propertyName];
-    }];
-    
-    // Convert NSDecimalNumber to NSString in order to serialize to JSON
-    [self enumeratePropertiesWithClass:[NSDecimalNumber class] usingBlock:^(NSString *propertyName, id objectValue) {
-        NSDecimalNumber *decimalNumber = objectValue;
-        [dictionary setObject:[decimalNumber stringValue] forKey:propertyName];
-    }];
-    
-    NSArray *allKeys = [dictionary allKeys];
     
     // Valid Classes: NSString, NSNumber, NSArray, NSDictionary, or NSNull
     NSSet *validJSONClasses = [NSSet setWithObjects:[NSString class], [NSNumber class], [NSArray class], [NSDictionary class], [NSNull class], nil];
     
-    for (NSString *key in allKeys)
-    {
-        id objectValue = dictionary[key]
-        ;
-        // Set nil to the invalid object from the dictionary before JSON serialization
-        dictionary[key] = [NSNull null];
+    // Convert values into JSON supported types
+    [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        if([obj isKindOfClass:[NSDate class]]) {
+            // Convert NSDate into string
+            NSString *dateString = [df stringFromDate:obj];
+            
+            if(dateString) {
+                [dictionary setObject:dateString forKey:key];
+            }
+        }
+        else if([obj isKindOfClass:[NSSet class]]) {
+            // Convert NSSet into NSArray in order to serialize to JSON
+            NSSet *set = obj;
+            [dictionary setObject:[set allObjects] forKey:key];
+        }
+        else if([obj isKindOfClass:[NSDecimalNumber class]]) {
+            // Convert NSDecimalNumber to NSString in order to serialize to JSON
+            NSDecimalNumber *decimalNumber = obj;
+            [dictionary setObject:[decimalNumber stringValue] forKey:key];
+        }
+        else if([obj isKindOfClass:[NSArray class]]) {
+            // Convert all array objects dictionaries to serialize to JSON
+            NSArray *array = obj;
+            NSMutableArray *jsonArray = [NSMutableArray arrayWithCapacity:[array count]];
+            for (id item in array) {
+                if([item isKindOfClass:[NSDictionary class]]) {
+                    [jsonArray addObject:[self dictionaryForJSONSerializationFromDict:item]];
+                }
+                else {
+                    [jsonArray addObject:item];
+                }
+            }
+            [dictionary setObject:[jsonArray copy] forKey:key];
+        }
+        else if([obj isKindOfClass:[NSDictionary class]]) {
+            // Convert all dictionary objects into supported ones by JSON
+            NSDictionary *item = [self dictionaryForJSONSerializationFromDict:obj];
+            [dictionary setObject:item forKey:key];
+        }
         
+        __block BOOL invalidClass = YES;
+        id object = dictionary[key];
         [validJSONClasses enumerateObjectsUsingBlock:^(id validClass, BOOL *stop) {
-            if([objectValue isKindOfClass:validClass])
+            if([object isKindOfClass:validClass])
             {
-                // Set objectValue to the valid object from the dictionary before JSON serialization
-                dictionary[key] = objectValue;
+                invalidClass = NO;
                 *stop = YES;
             }
         }];
-    }
+        
+        if(invalidClass) {
+            // Set nil to the invalid object from the dictionary before JSON serialization
+            dictionary[key] = [NSNull null];
+        }
+    }];
     
     return dictionary;
 }
@@ -316,7 +336,7 @@
 - (NSString *)JSONStringForNonNilProperties:(NSError **)error
 {
     NSDictionary *dictionary = [self dictionaryForNonNilPropertiesAndDatesAsStrings];
-
+    
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:error];
     NSString *resultAsString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     
