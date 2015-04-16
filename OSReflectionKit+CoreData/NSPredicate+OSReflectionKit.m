@@ -15,14 +15,14 @@
 
 @implementation NSPredicate (OSReflectionKit)
 
-+ (instancetype) predicateForUniqueness:(Class) klazz withDictionary:(NSDictionary *) dictionary
++ (NSString *)predicateStringForUniquenessForClass:(Class)klazz withDictionary:(NSDictionary *)dictionary
 {
-    NSPredicate *predicate = nil;
-    
-    NSArray *uniqueFields = [klazz uniqueFields];
-    
-    if([uniqueFields count] > 0)
-    {
+	NSString *predicateString = nil;
+
+	NSArray *uniqueFields = [klazz uniqueFields];
+
+	if([uniqueFields count] > 0)
+	{
 		NSMutableArray *unmappedUniqueFields = [uniqueFields mutableCopy];
 
 		if ([(id)klazz respondsToSelector:@selector(reflectionMapping)]) {
@@ -65,13 +65,45 @@
 			}
 		}
 
-        NSMutableString *predicateFormat = [[uniqueFields componentsJoinedByString:@" = %@ && "] mutableCopy];
-        [predicateFormat appendString:@" = %@"];
+		NSUInteger valuesCount = [values count];
 
-        if([values count] > 0)
-            predicate = [NSPredicate predicateWithFormat:predicateFormat argumentArray:values];
-    }
-    
-    return predicate;
+		if (valuesCount) {
+			NSCAssert([uniqueFields count] == valuesCount, @"Count of unique fields (%tu) and values (%tu) don't match", [uniqueFields count], valuesCount);
+
+			NSMutableArray *keyValuePairs = [[NSMutableArray alloc] initWithCapacity:valuesCount];
+
+			for (NSUInteger index = 0; index < valuesCount; index++) {
+				id value = values[index];
+
+				if (value == [NSNull null]) {
+					value = @"NIL";
+				}
+				else if ([value isKindOfClass:[NSString class]]) {
+					value = [[NSString alloc] initWithFormat:@"'%@'", value];
+				}
+
+				[keyValuePairs addObject:[[NSString alloc] initWithFormat:@"%@ == %@", uniqueFields[index], value]];
+			}
+
+			predicateString = [keyValuePairs componentsJoinedByString:@" && "];
+		}
+	}
+
+	return predicateString;
 }
+
+
++ (instancetype)predicateForUniquenessForClass:(Class)klazz withDictionary:(NSDictionary *)dictionary
+{
+	NSPredicate *predicate = nil;
+
+	NSString *predicateString = [self predicateStringForUniquenessForClass:klazz withDictionary:dictionary];
+
+	if (predicateString) {
+		predicate = [NSPredicate predicateWithFormat:predicateString];
+	}
+
+	return predicate;
+}
+
 @end

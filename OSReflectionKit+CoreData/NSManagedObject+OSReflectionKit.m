@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 iAOS Software. All rights reserved.
 //
 
+#import <Availability.h>
+
 #if  ! __has_feature(objc_arc)
 #error This file must be compiled with ARC. Use -fobjc-arc flag (or convert project to ARC).
 #endif
@@ -283,14 +285,16 @@ static NSManagedObjectContext *_defaultContext = nil;
 
 + (NSUInteger) countUniqueObjectsWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName limit:(NSUInteger) limit
 {
-    NSPredicate *predicate = [NSPredicate predicateForUniqueness:[self class] withDictionary:dictionary];
+    NSPredicate *predicate = [NSPredicate predicateForUniquenessForClass:[self class] withDictionary:dictionary];
     return [self countInManagedObjectContext:context forEntityName:entityName withPredicate:predicate];
 }
 
 + (instancetype) firstWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName
 {
-    id object = nil;
-    NSArray *objects = [self fetchUniqueObjectsWithDictionary:dictionary inManagedObjectContext:context forEntityName:entityName limit:1];
+    NSManagedObject *object = nil;
+	NSString *predicateForUniquenessFormat = [NSPredicate predicateStringForUniquenessForClass:[self class] withDictionary:dictionary];
+    NSArray *objects = [self fetchUniqueObjectsWithDictionary:dictionary inManagedObjectContext:context forEntityName:entityName limit:1 predicate:[NSPredicate predicateWithFormat:predicateForUniquenessFormat]];
+
     if ([objects count] > 0)
     {
         object = [objects firstObject];
@@ -301,7 +305,12 @@ static NSManagedObjectContext *_defaultContext = nil;
 
 + (NSArray *) fetchUniqueObjectsWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName limit:(NSUInteger) limit
 {
-    NSArray *objects = nil;
+	return [self fetchUniqueObjectsWithDictionary:dictionary inManagedObjectContext:context forEntityName:entityName limit:limit predicate:nil];
+}
+
++ (NSArray *) fetchUniqueObjectsWithDictionary:(NSDictionary * ) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName limit:(NSUInteger) limit predicate:(NSPredicate *)predicate
+{
+    NSArray * __block objects = nil;
 
     if([dictionary count] > 0)
     {
@@ -311,8 +320,11 @@ static NSManagedObjectContext *_defaultContext = nil;
         {
             request.fetchLimit = limit;
         }
-        
-        NSPredicate *predicate = [NSPredicate predicateForUniqueness:[self class] withDictionary:dictionary];
+
+		if (!predicate) {
+			predicate = [NSPredicate predicateForUniquenessForClass:[self class] withDictionary:dictionary];
+		}
+
         if(predicate)
         {
             request.predicate = predicate;

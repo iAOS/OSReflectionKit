@@ -10,6 +10,7 @@
 
 @interface NSPredicate (OSReflectionKit)
 
-+ (instancetype) predicateForUniqueness:(Class) klazz withDictionary:(NSDictionary *) dictionary;
++ (NSString *)predicateStringForUniquenessForClass:(Class)klazz withDictionary:(NSDictionary *)dictionary;
++ (instancetype)predicateForUniquenessForClass:(Class)klazz withDictionary:(NSDictionary *)dictionary;
 
 @end
