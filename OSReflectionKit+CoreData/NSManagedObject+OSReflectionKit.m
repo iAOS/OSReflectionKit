@@ -21,6 +21,11 @@ static NSManagedObjectContext *_defaultContext = nil;
 
 #pragma mark - Class Properties
 
++ (NSDictionary *)reflectionMapping
+{
+    return @{};
+}
+
 + (NSString *)entityName
 {
     return NSStringFromClass([self class]);
