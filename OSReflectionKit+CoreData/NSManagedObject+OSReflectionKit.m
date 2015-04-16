@@ -85,7 +85,11 @@ static NSManagedObjectContext *_defaultContext = nil;
 
 + (NSEntityDescription *)entityDescription
 {
-    return [NSEntityDescription entityForName:[self entityName] inManagedObjectContext:[self defaultManagedObjectContext]];
+	NSEntityDescription * __block entityDescription = nil;
+	[[self defaultManagedObjectContext] performBlockAndWait:^{
+		entityDescription = [NSEntityDescription entityForName:[self entityName] inManagedObjectContext:[self defaultManagedObjectContext]];
+	}];
+    return entityDescription;
 }
 
 #pragma mark - Reflection exceptions
@@ -121,7 +125,12 @@ static NSManagedObjectContext *_defaultContext = nil;
 
 - (BOOL) hasBeenDeleted
 {
-    NSManagedObject *managedObjectClone = [[self managedObjectContext] existingObjectWithID:[self objectID] error:nil];
+    NSManagedObject * __block managedObjectClone = nil;
+
+	[[self managedObjectContext] performBlockAndWait:^{
+		managedObjectClone = [[self managedObjectContext] existingObjectWithID:[self objectID] error:nil];
+	}];
+
     return (managedObjectClone == nil);
 }
 
@@ -135,15 +144,22 @@ static NSManagedObjectContext *_defaultContext = nil;
 + (instancetype)objectFromDictionary:(NSDictionary *)dictionary
 {
     NSAssert([self defaultManagedObjectContext], @"Please register the default managed object context for class: '%@' before using '%s'.", NSStringFromClass([self class]), __PRETTY_FUNCTION__);
-    
-    return [self objectFromDictionary:dictionary inManagedObjectContext:[self defaultManagedObjectContext]];
+	NSManagedObject * __block managedObject = nil;
+    [[self defaultManagedObjectContext] performBlockAndWait:^{
+		managedObject = [self objectFromDictionary:dictionary inManagedObjectContext:[self defaultManagedObjectContext]];
+	}];
+    return managedObject;
 }
 
 + (instancetype)objectFromJSON:(NSString *)jsonString
 {
     NSAssert([self defaultManagedObjectContext], @"Please register the default managed object context for class: '%@' before using '%s'.", NSStringFromClass([self class]), __PRETTY_FUNCTION__);
-    
-    return [self objectFromJSON:jsonString inManagedObjectContext:[self defaultManagedObjectContext]];
+
+	NSManagedObject * __block managedObject = nil;
+	[[self defaultManagedObjectContext] performBlockAndWait:^{
+		managedObject = [self objectFromJSON:jsonString inManagedObjectContext:[self defaultManagedObjectContext]];
+	}];
+	return managedObject;
 }
 
 + (instancetype) objectInManagedObjectContext:(NSManagedObjectContext *) context
@@ -166,31 +182,46 @@ static NSManagedObjectContext *_defaultContext = nil;
 + (instancetype) objectFromDictionary:(NSDictionary *) dictionary inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName
 {
     // Check if the dictionary is not stored yet
-    id object = [self firstWithDictionary:dictionary inManagedObjectContext:context forEntityName:entityName];
+    id __block object = [self firstWithDictionary:dictionary inManagedObjectContext:context forEntityName:entityName];
 
     if(object == nil)
     {
         // Create a new object since there is no one like
-        object = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
+		[context performBlockAndWait:^{
+			object = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
+		}];
     }
-    
+
     // Try to map the object if there is any dictionary data
     if([dictionary count] > 0)
     {
-        NSError *error = nil;
-        if(![object mapWithDictionary:dictionary error:&error])
-            NSLog(@"Error mapping object: %@", error);
+		[context performBlockAndWait:^{
+			NSError *error = nil;
+			if(![object mapWithDictionary:dictionary error:&error]) {
+#if defined(DEBUG)
+				NSLog(@"Error mapping object: %@", error);
+#endif
+			}
+		}];
     }
-    
-    // Auto-increment
-    NSError *error = nil;
-    NSDictionary *autoincrementedFields = [object autoincrementedFieldsDictWithError:&error];
-    if (error)
-        NSLog(@"Error auto-incrementing fields: %@", error);
-    
-    if(![object mapWithDictionary:autoincrementedFields error:&error])
-        NSLog(@"Error mapping object for auto-increment fields: %@", error);
-    
+
+	[context performBlockAndWait:^{
+		// Auto-increment
+		NSError *error = nil;
+		NSDictionary *autoincrementedFields = [object autoincrementedFieldsDictWithError:&error];
+		if (error) {
+#if defined(DEBUG)
+			NSLog(@"Error auto-incrementing fields: %@", error);
+#endif
+		}
+
+		if(![object mapWithDictionary:autoincrementedFields error:&error]) {
+#if defined(DEBUG)
+			NSLog(@"Error mapping object for auto-increment fields: %@", error);
+#endif
+		}
+	}];
+
     return object;
 }
 
@@ -201,8 +232,9 @@ static NSManagedObjectContext *_defaultContext = nil;
     {
         id obj = [self objectFromDictionary:dict inManagedObjectContext:context forEntityName:entityName];
         
-        if(obj)
+        if(obj) {
             [objects addObject:obj];
+		}
     }
     
     return [objects copy];
@@ -292,13 +324,18 @@ static NSManagedObjectContext *_defaultContext = nil;
 {
     NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:entityName];
 
-    if(predicate)
+    if(predicate) {
         fetchRequest.predicate = predicate;
+	}
     
-    NSError *error = nil;
+    NSError * __block error = nil;
     
-    NSUInteger count = [context countForFetchRequest:fetchRequest error:&error];
-    
+    NSUInteger __block count = 0;
+
+	[context performBlockAndWait:^{
+		count = [context countForFetchRequest:fetchRequest error:&error];
+	}];
+
     if(error)
     {
         NSLog(@"%@", error);
@@ -394,8 +431,10 @@ static NSManagedObjectContext *_defaultContext = nil;
         {
             request.predicate = predicate;
 
-			NSError *error = nil;
-			objects = [context executeFetchRequest:request error:&error];
+			NSError * __block error = nil;
+			[context performBlockAndWait:^{
+				objects = [context executeFetchRequest:request error:&error];
+			}];
         }
     }
     
@@ -406,22 +445,28 @@ static NSManagedObjectContext *_defaultContext = nil;
 {
     NSAssert([self defaultManagedObjectContext], @"Please register the default managed object context for class: '%@' before using '%s'.", NSStringFromClass([self class]), __PRETTY_FUNCTION__);
     
-    NSArray *objects = nil;
+    NSArray * __block objects = nil;
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:[self entityName]];
     
-    if(limit > 0)
+    if(limit > 0) {
         request.fetchLimit = limit;
+	}
     
-    if(sortDescriptors)
+    if(sortDescriptors) {
         request.sortDescriptors = sortDescriptors;
+	}
     
-    if(predicate)
+    if(predicate) {
         request.predicate = predicate;
+	}
     
-    NSError *error = nil;
-    objects = [[self defaultManagedObjectContext] executeFetchRequest:request error:&error];
-    
+    NSError * __block error = nil;
+
+	[[self defaultManagedObjectContext] performBlockAndWait:^{
+		objects = [[self defaultManagedObjectContext] executeFetchRequest:request error:&error];
+	}];
+
     return objects;
 }
 
@@ -451,10 +496,16 @@ static NSManagedObjectContext *_defaultContext = nil;
 {
     // Check whether it should auto-increment fields before saving
     NSDictionary *autoincrementedFields = [self autoincrementedFieldsDictWithError:error];
-    if(autoincrementedFields)
+    if(autoincrementedFields) {
         [self mapWithDictionary:autoincrementedFields error:error];
-    
-    return [context save:error];
+	}
+
+	BOOL __block didSave = NO;
+	[context performBlockAndWait:^{
+		didSave = [context save:error];
+	}];
+
+    return didSave;
 }
 
 #pragma mark - Private Methods
