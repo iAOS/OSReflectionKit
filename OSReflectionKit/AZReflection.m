@@ -81,7 +81,7 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 	return instance;
 }
 
-- (id)reflectionMapWithDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference error:(NSError **)error
+- (id)reflectionMapWithDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference context:(void *)context error:(NSError **)error
 {
 	if (!dictionary || ![dictionary isKindOfClass:[NSDictionary class]] || !classReference) {
         if(error)
@@ -105,7 +105,16 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 
 	// Can we use class as instance factory?
 	if (classHasProtocolFactoryMethod) {
-		instance = [classReference reflectionNewInstanceWithDictionary:dictionary];
+		Class NSManagedObjectClass = NSClassFromString(@"NSManagedObject");
+		if ([classReference isSubclassOfClass:NSManagedObjectClass]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+			instance = [(id)classReference performSelector:NSSelectorFromString(@"objectFromDictionary:inManagedObjectContext:") withObject:dictionary withObject:(__bridge id)(context)];
+#pragma clang diagnostic pop
+		}
+		else {
+			instance = [classReference reflectionNewInstanceWithDictionary:dictionary];
+		}
 	} else {
 		// Otherwise default to
 		instance = [[classReference alloc] init];
@@ -357,11 +366,17 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 	
 	void(^assignmentBlock)(const struct property_attributes_t * const attributes) = ^(const struct property_attributes_t * const attributes){
 
+		void *context = NULL;
+
+		if ([instance isKindOfClass:NSClassFromString(@"NSManagedObject")]) {
+			context = (__bridge void *)([instance performSelector:@selector(managedObjectContext)]);
+		}
+
 		// Actual value assigning happens here
 		if ([value isKindOfClass:[NSDictionary class]]) {
 			if (propertyClass) {
 				// it's a custom class
-				[instance setValue:[self reflectionMapWithDictionary:value rootClass:propertyClass error:error] forKey:key];				
+				[instance setValue:[self reflectionMapWithDictionary:value rootClass:propertyClass context:context error:error] forKey:key];
 			} else {
 				[instance setValue:value forKey:key];								
 			}
@@ -371,7 +386,7 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 				// it's an array of custom classes
 				NSMutableArray *array = [NSMutableArray arrayWithCapacity:((NSArray *)value).count];
 				for (id subvalue in value) {
-					[array addObject:[self reflectionMapWithDictionary:subvalue rootClass:propertyClass error:error]];
+					[array addObject:[self reflectionMapWithDictionary:subvalue rootClass:propertyClass context:context error:error]];
 				}
                 
                 id objValue = array;
@@ -415,7 +430,9 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 				}
 				else
 				{
-					*error = ReflectionMapperError(@"Could not parse value: %@", value);
+					if (error) {
+						*error = ReflectionMapperError(@"Could not parse value: %@", value);
+					}
 					[instance setValue:nil forKey:key];
 				}
 			}
@@ -734,7 +751,7 @@ static const char * getPropertyType(objc_property_t property) {
 
 + (id)reflectionMapWithDictionary:(NSDictionary *)dictionary error:(NSError **)error
 {
-	return [[AZReflection sharedReflectionMapper] reflectionMapWithDictionary:dictionary rootClass:[self class] error:error];
+	return [[AZReflection sharedReflectionMapper] reflectionMapWithDictionary:dictionary rootClass:[self class] context:NULL error:error];
 }
 
 - (BOOL) mapWithDictionary:(NSDictionary *)dictionary

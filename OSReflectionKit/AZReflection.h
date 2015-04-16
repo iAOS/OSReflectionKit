@@ -39,7 +39,7 @@
 @interface AZReflection : NSObject
 extern NSString *const AZReflectionMapperErrorDomain;
 + (AZReflection *)sharedReflectionMapper;
-- (id)reflectionMapWithDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference error:(NSError **)error;
+- (id)reflectionMapWithDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference context:(void *)context error:(NSError **)error;
 
 - (BOOL) mapObject:(id) object withDictionary:(NSDictionary *)dictionary rootClass:(Class)classReference error:(NSError **)error;
 
