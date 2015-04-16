@@ -82,34 +82,6 @@
 ///-----------------------------
 
 /**
- Creates an instance from the type of the calling class.
- 
- @return The instance of the created object
- @see -objectFromDictionary:
- */
-+ (instancetype) objectWithController:(NSFetchedResultsController *) controller __deprecated;
-
-/**
- Creates an instance from the type of the calling class and sets its properties from a `NSDictionay` object.
- 
- @param dictionary The `NSDictionary` object containing the object data.
- @return The instance of the created object
- @discussion If you have a class that has a property: `NSString` *name, then you can call [CustomClassName objectFromDictionay:@{@"name" : @"Alexandre Santos"}] and it will return an object of the type 'CustomClassName' with the attribute 'name' containing the value 'Alexandre Santos'.
- @see -object
- */
-+ (instancetype) objectFromDictionary:(NSDictionary *) dictionary withController:(NSFetchedResultsController *) controller __deprecated;
-
-/**
- Creates a `NSArray` instance from the type of the calling class and sets its properties from an array of `NSDictionay` objects.
- 
- @param dicts An array of `NSDictionary` objects containing the objects data.
- @return An array of objects from the calling class type.
- @deprecated Please use `objectsFromDicts:inManagedObjectContext` instead.
- @see -objectFromDictionary:
- */
-+ (NSArray *) objectsFromDicts:(NSArray *) dicts withController:(NSFetchedResultsController *) controller __deprecated;
-
-/**
  Creates a `NSArray` instance from the type of the calling class and sets its properties from an array of `NSDictionay` objects.
  
  @param dicts An array of `NSDictionary` objects containing the objects data.
@@ -170,9 +142,6 @@
  @discussion If you have a class that has a property: `NSString` *name, then you can call [CustomClassName objectFromJSON:@"{"name" : "Alexandre Santos"}"] and it will return an object of the type 'CustomClassName' with the attribute 'name' containing the value 'Alexandre Santos'.
  @see -objectFromDictionary:
  */
-+ (instancetype) objectFromJSON:(NSString *) jsonString withController:(NSFetchedResultsController *) controller error:(NSError **) error __deprecated;
-+ (instancetype) objectFromJSON:(NSString *) jsonString withController:(NSFetchedResultsController *) controller __deprecated;
-
 + (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName error:(NSError **) error;
 + (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName;
 + (instancetype) objectFromJSON:(NSString *) jsonString inManagedObjectContext:(NSManagedObjectContext *) context;
@@ -185,9 +154,6 @@
  @return An array of objects from the calling class type.
  @see -objectFromJSON:
  */
-+ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray withController:(NSFetchedResultsController *) controller error:(NSError **) error __deprecated;
-+ (NSArray *)objectsFromJSONArray:(NSString *)jsonArray withController:(NSFetchedResultsController *) controller __deprecated;
-
 + (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName error:(NSError **) error;
 + (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context forEntityName:(NSString *) entityName ;
 + (NSArray *)objectsFromJSONArray:(NSString *)jsonArray inManagedObjectContext:(NSManagedObjectContext *) context;
