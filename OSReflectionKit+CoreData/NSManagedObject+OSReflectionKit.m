@@ -17,7 +17,31 @@
 
 static NSString * const OSReflectionKitCoreDataExtensionsErrorDomain = @"OSReflectionKitCoreDataExtensionsErrorDomain";
 
+static NSCache *OSRManagedObjectCacheForContext = nil;
+
 @implementation NSManagedObject (OSReflectionKit)
+
++ (NSCache *)OSRManagedObjectCacheForContext:(NSManagedObjectContext *)context
+{
+	NSCache *OSRManagedObjectCache = [OSRManagedObjectCacheForContext objectForKey:context];
+
+	if (!OSRManagedObjectCache) {
+		OSRManagedObjectCache = [[NSCache alloc] init];
+		OSRManagedObjectCache.countLimit = 1024;
+		[OSRManagedObjectCacheForContext setObject:OSRManagedObjectCache forKey:context];
+	}
+
+	return OSRManagedObjectCache;
+}
+
++ (void)load
+{
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		OSRManagedObjectCacheForContext = [[NSCache alloc] init];
+		[OSRManagedObjectCacheForContext setName:@"OSRManagedObjectCacheForContext"];
+	});
+}
 
 static NSManagedObjectContext *_defaultContext = nil;
 
@@ -293,11 +317,52 @@ static NSManagedObjectContext *_defaultContext = nil;
 {
     NSManagedObject *object = nil;
 	NSString *predicateForUniquenessFormat = [NSPredicate predicateStringForUniquenessForClass:[self class] withDictionary:dictionary];
+	NSString *keyWithPredicateFormat = [NSString stringWithFormat:@"%@ %@", entityName, predicateForUniquenessFormat];
+
+#ifdef DEBUG
+	static NSUInteger cacheHits = 0;
+	static NSUInteger cacheMisses = 0;
+	static float cacheHitRatio = 0;
+#endif
+
+	NSCache *OSRManagedObjectCache = [self OSRManagedObjectCacheForContext:context];
+
+	object = [OSRManagedObjectCache objectForKey:keyWithPredicateFormat];
+
+	if ([object isDeleted]) {
+		[OSRManagedObjectCache removeObjectForKey:keyWithPredicateFormat];
+		object = nil;
+	}
+
+	if (object) {
+#ifdef DEBUG
+		cacheHits++;
+		if (0 == cacheHits % 50) {
+			cacheHitRatio = (float)cacheHits / ((float)cacheHits + (float)cacheMisses);
+		}
+#endif
+		return object;
+	}
+
     NSArray *objects = [self fetchUniqueObjectsWithDictionary:dictionary inManagedObjectContext:context forEntityName:entityName limit:1 predicate:[NSPredicate predicateWithFormat:predicateForUniquenessFormat]];
 
     if ([objects count] > 0)
     {
         object = [objects firstObject];
+
+		if ([object isDeleted]) {
+			[OSRManagedObjectCache removeObjectForKey:keyWithPredicateFormat];
+			object = nil;
+			[context performBlockAndWait:^{
+				[context save:nil];
+			}];
+		}
+		else {
+#ifdef DEBUG
+			cacheMisses++;
+#endif
+			[OSRManagedObjectCache setObject:object forKey:keyWithPredicateFormat];
+		}
     }
     
     return object;
