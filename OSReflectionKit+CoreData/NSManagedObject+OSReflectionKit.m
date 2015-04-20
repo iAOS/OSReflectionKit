@@ -80,6 +80,11 @@ static NSManagedObjectContext *_defaultContext = nil;
 
 #pragma mark - Instanciation Methods
 
++ (id)reflectionNewInstanceWithDictionary:(NSDictionary *)dictionary
+{
+    return [self objectFromDictionary:dictionary];
+}
+
 + (instancetype)object
 {
     AssertDefaultManagedObjectContext();
@@ -263,6 +268,19 @@ static NSManagedObjectContext *_defaultContext = nil;
     return [self firstWithAttributes:attributes inManagedObjectContext:[self defaultManagedObjectContext]];
 }
 
++ (NSArray *) fetchAll
+{
+    AssertDefaultManagedObjectContext();
+    return [self fetchAllInManagedObjectContext:[self defaultManagedObjectContext]];
+}
+
++ (NSArray *) fetchAllInManagedObjectContext:(NSManagedObjectContext *) context
+{
+    NSArray *objects = [context executeFetchRequest:[self fetchRequestForObjectsWithAttributes:nil] error:nil];
+    
+    return objects;
+}
+
 + (NSArray *) fetchWithRequest:(NSFetchRequest *)request
 {
     return [self fetchWithRequest:request error:nil];
@@ -349,7 +367,7 @@ static NSManagedObjectContext *_defaultContext = nil;
 
 - (NSDictionary *) autoincrementedFieldsDictWithError:(NSError **) error
 {
-    BOOL success = YES;
+    __unused BOOL success = YES;
     NSArray *allAutoincrementFields = [[self class] autoincrementFields];
     NSMutableArray *ignoredFields = [NSMutableArray array];
     NSMutableDictionary *fieldsDictionary = [NSMutableDictionary dictionaryWithCapacity:[allAutoincrementFields count]];

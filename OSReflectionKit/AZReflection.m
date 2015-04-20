@@ -73,7 +73,7 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
 
 	id instance = nil;
 	
-	BOOL classHasProtocolFactoryMethod = class_conformsToProtocol(classReference, @protocol(AZReflectionHint)) && [(id)classReference respondsToSelector:@selector(reflectionNewInstanceWithDictionary:)];
+	BOOL classHasProtocolFactoryMethod = [(id)classReference respondsToSelector:@selector(reflectionNewInstanceWithDictionary:)];
 	// Can we use class as instance factory?
 	if (classHasProtocolFactoryMethod) {
 		instance = [classReference reflectionNewInstanceWithDictionary:dictionary];
@@ -267,6 +267,11 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
                 {
                     objValue = [NSSet setWithArray:array];
                 }
+                // Convert the NSArray into NSOrderedSet according to the property type
+                if([[[instance class] classForProperty:key] isSubclassOfClass:[NSOrderedSet class]])
+                {
+                    objValue = [NSOrderedSet orderedSetWithArray:array];
+                }
                 
 				[instance setValue:objValue forKey:key];
 			} else {
@@ -276,6 +281,12 @@ NSString *const AZReflectionMapperErrorDomain = @"AZReflectionMapperErrorDomain"
                 if([[[instance class] classForProperty:key] isSubclassOfClass:[NSSet class]])
                 {
                     objValue = [NSSet setWithArray:value];
+                }
+                
+                // Convert the NSArray into NSOrderedSet according to the property type
+                if([[[instance class] classForProperty:key] isSubclassOfClass:[NSOrderedSet class]])
+                {
+                    objValue = [NSOrderedSet orderedSetWithArray:value];
                 }
                 
 				[instance setValue:objValue forKey:key];

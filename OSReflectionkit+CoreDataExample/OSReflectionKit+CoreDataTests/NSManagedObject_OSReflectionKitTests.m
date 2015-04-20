@@ -30,7 +30,7 @@
     [OSCoreDataManager registerModelFileName:@"TestModel.momd"];
     
     // Register the managed object context
-    [NSManagedObject registerDefaultManagedObjectContext:[OSCoreDataManager sharedManager].managedObjectContext];
+    [TestModel registerDefaultManagedObjectContext:[OSCoreDataManager sharedManager].managedObjectContext];
 }
 
 - (void)setUp

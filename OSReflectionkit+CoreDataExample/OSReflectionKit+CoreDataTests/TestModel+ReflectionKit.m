@@ -10,10 +10,10 @@
 
 @implementation TestModel (ReflectionKit)
 
-//+ (NSDictionary *)reflectionMapping
-//{
-//    return @{@"children":@"children,<ChildTestModel>"};
-//}
++ (NSDictionary *)reflectionMapping
+{
+    return @{@"children":@"children,<ChildTestModel>"};
+}
 
 + (NSArray *)autoincrementFields
 {

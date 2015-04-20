@@ -244,6 +244,22 @@ Registers the default managed object context for the current class.
 + (instancetype) firstWithAttributes:(NSDictionary * ) attributes;
 
 /**
+ Finds all objects stored for the calling class.
+ 
+ @return An array of objects that meet the criteria specified by request fetched from the receiver and from the persistent stores associated with the receiver’s persistent store coordinator. If an error occurs, returns nil. If no objects match the criteria specified by request, returns an empty array.
+ */
++ (NSArray *) fetchAll;
+
+/**
+ Finds all objects stored for the calling class in the given context.
+ 
+ @param context The given managed object context.
+
+ @return An array of objects that meet the criteria specified by request fetched from the receiver and from the persistent stores associated with the receiver’s persistent store coordinator. If an error occurs, returns nil. If no objects match the criteria specified by request, returns an empty array.
+ */
++ (NSArray *) fetchAllInManagedObjectContext:(NSManagedObjectContext *) context;
+
+/**
  Uses the default context to execute the fetch request.
  
  @param request The fetch request to be executed.
