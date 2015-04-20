@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13C1021" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="ChildTestModel" representedClassName="ChildTestModel" syncable="YES">
+        <attribute name="enabled" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TestModel" inverseName="children" inverseEntity="TestModel" syncable="YES"/>
+    </entity>
+    <entity name="TestModel" representedClassName="TestModel" syncable="YES">
+        <attribute name="autoincrement" attributeType="Integer 32" indexed="YES" syncable="YES"/>
+        <attribute name="string" attributeType="String" syncable="YES"/>
+        <attribute name="uniqueString" attributeType="String" indexed="YES" syncable="YES"/>
+        <relationship name="children" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChildTestModel" inverseName="parent" inverseEntity="ChildTestModel" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="TestModel" positionX="-10062" positionY="-6565" width="128" height="103"/>
+        <element name="ChildTestModel" positionX="-9828" positionY="-6550" width="128" height="88"/>
+    </elements>
+</model>

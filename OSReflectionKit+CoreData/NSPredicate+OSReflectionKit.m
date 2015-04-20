@@ -19,11 +19,13 @@
 {
     NSPredicate *predicate = nil;
     
-    NSArray *keys = [attributes allKeys];
+    NSSet *keys = [attributes keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
+        return [obj isKindOfClass:[NSDictionary class]] || [obj isKindOfClass:[NSArray class]] ? NO : YES;
+    }];
     
     if([keys count] > 0)
     {
-        NSMutableString *predicateFormat = [[keys componentsJoinedByString:@" = %@ &&"] mutableCopy];
+        NSMutableString *predicateFormat = [[[keys allObjects] componentsJoinedByString:@" = %@ &&"] mutableCopy];
         [predicateFormat appendString:@" = %@"];
         NSMutableArray *values = [NSMutableArray arrayWithCapacity:[keys count]];
         for (NSString *key in keys) {

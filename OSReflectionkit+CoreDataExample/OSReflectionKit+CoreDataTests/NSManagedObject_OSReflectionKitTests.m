@@ -7,28 +7,57 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "OSCoreDataManager.h"
+#import "TestModel+ReflectionKit.h"
 
 @interface NSManagedObject_OSReflectionKitTests : XCTestCase
+
+@property (nonatomic) TestModel *testModel;
 
 @end
 
 @implementation NSManagedObject_OSReflectionKitTests
 
+- (NSDictionary *) mockDictionaryForTestModel
+{
+    return @{@"string":@"Test String",
+             @"uniqueString":@"Some unique string"};
+}
+
++ (void)setUp
+{
+    // Setup the Core Data data model for the tests
+    [OSCoreDataManager registerModelFileName:@"TestModel.momd"];
+    
+    // Register the managed object context
+    [NSManagedObject registerDefaultManagedObjectContext:[OSCoreDataManager sharedManager].managedObjectContext];
+}
+
 - (void)setUp
 {
+    self.testModel = [TestModel objectFromDictionary:[self mockDictionaryForTestModel]];
+
     [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 
 - (void)tearDown
 {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+    // Clear the stored objects
+    [TestModel deleteAll];
+    [ChildTestModel deleteAll];
+    
     [super tearDown];
 }
 
-- (void)testExample
+- (void)testInstantiation
 {
-    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+    XCTAssertNotNil(self.testModel);
+    
+    // Test saving
+    XCTAssertFalse([self.testModel isSaved]);
+    NSError *error = nil;
+    XCTAssertTrue([self.testModel saveWithError:&error]);
+    XCTAssertTrue([self.testModel isSaved]);
 }
 
 @end

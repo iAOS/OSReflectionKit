@@ -88,7 +88,7 @@ static NSString *_modelFileName = nil;
     NSString *fileNameWithoutExtension = [fullFileName stringByDeletingPathExtension];
     NSString *fileExt = [fullFileName pathExtension] ?: @"momd";
     
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:fileNameWithoutExtension withExtension:fileExt];
+    NSURL *modelURL = [[NSBundle bundleForClass: [self class]] URLForResource:fileNameWithoutExtension withExtension:fileExt];
     _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     return _managedObjectModel;
 }

@@ -253,7 +253,7 @@ static NSManagedObjectContext *_defaultContext = nil;
 
 + (instancetype) firstWithAttributes:(NSDictionary * ) attributes inManagedObjectContext:(NSManagedObjectContext *) context
 {
-    NSArray *objects = [context executeFetchRequest:[self fetchRequestForObjectsWithAttributes:attributes] error:nil];
+    NSArray *objects = [context executeFetchRequest:[self fetchRequestForUniqueObjectsWithAttributes:attributes] error:nil];
     
     return [objects firstObject];
 }
@@ -324,6 +324,27 @@ static NSManagedObjectContext *_defaultContext = nil;
     return [context save:error];
 }
 
++ (void) deleteAll
+{
+    [self deleteAllWithPredicate:nil];
+}
+
++ (void) deleteAllWithPredicate:(NSPredicate *) predicate
+{
+    AssertDefaultManagedObjectContext();
+    [self deleteAllWithPredicate:predicate inManagedObjectContext:[self defaultManagedObjectContext]];
+}
+
++ (void) deleteAllWithPredicate:(NSPredicate *) predicate inManagedObjectContext:(NSManagedObjectContext *) context
+{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:[self entityName]];
+    request.predicate = predicate;
+    NSArray *allObjects = [self fetchWithRequest:request];
+    for (NSManagedObject *object in allObjects) {
+        [context deleteObject:object];
+    }
+}
+
 #pragma mark - Private Methods
 
 - (NSDictionary *) autoincrementedFieldsDictWithError:(NSError **) error
@@ -362,7 +383,7 @@ static NSManagedObjectContext *_defaultContext = nil;
         }
     }
     
-    if(*error && [ignoredFields count] > 0)
+    if(error && [ignoredFields count] > 0)
     {
         NSString *errorMessage = nil;
         NSString *fieldsString = [ignoredFields componentsJoinedByString:@", "];

@@ -17,6 +17,15 @@
 		8A9FC1F919162E0B0087E977 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8A9FC1F719162E0B0087E977 /* InfoPlist.strings */; };
 		8A9FC1FB19162E0B0087E977 /* NSManagedObject_OSReflectionKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9FC1FA19162E0B0087E977 /* NSManagedObject_OSReflectionKitTests.m */; };
 		8A9FC20419164DCF0087E977 /* NSManagedObject+OSReflectionKitDeprecated.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9FC20319164DCF0087E977 /* NSManagedObject+OSReflectionKitDeprecated.m */; };
+		8A9FC208191756010087E977 /* NSManagedObject+OSReflectionKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AEDDE4B17B054E9003CF0BF /* NSManagedObject+OSReflectionKit.m */; };
+		8A9FC209191756010087E977 /* NSPredicate+OSReflectionKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A73229F18A001E200DEBBD7 /* NSPredicate+OSReflectionKit.m */; };
+		8A9FC20A191756010087E977 /* OSCoreDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7322A218A009BB00DEBBD7 /* OSCoreDataManager.m */; };
+		8A9FC20B191756010087E977 /* NSManagedObject+OSReflectionKitDeprecated.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9FC20319164DCF0087E977 /* NSManagedObject+OSReflectionKitDeprecated.m */; };
+		8A9FC20E191756710087E977 /* TestModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8A9FC20C191756710087E977 /* TestModel.xcdatamodeld */; };
+		8A9FC211191758820087E977 /* TestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9FC210191758820087E977 /* TestModel.m */; };
+		8A9FC214191758820087E977 /* ChildTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9FC213191758820087E977 /* ChildTestModel.m */; };
+		8A9FC218191758CE0087E977 /* TestModel+ReflectionKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9FC217191758CE0087E977 /* TestModel+ReflectionKit.m */; };
+		8A9FC21C1917590A0087E977 /* ChildTestModel+ReflectionKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9FC21B1917590A0087E977 /* ChildTestModel+ReflectionKit.m */; };
 		8AEDDE0A17B042F1003CF0BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEDDE0917B042F1003CF0BF /* UIKit.framework */; };
 		8AEDDE0C17B042F1003CF0BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEDDE0B17B042F1003CF0BF /* Foundation.framework */; };
 		8AEDDE0E17B042F1003CF0BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AEDDE0D17B042F1003CF0BF /* CoreGraphics.framework */; };
@@ -63,6 +72,15 @@
 		8A9FC1FC19162E0B0087E977 /* OSReflectionKit+CoreDataTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OSReflectionKit+CoreDataTests-Prefix.pch"; sourceTree = "<group>"; };
 		8A9FC20219164DCF0087E977 /* NSManagedObject+OSReflectionKitDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObject+OSReflectionKitDeprecated.h"; sourceTree = "<group>"; };
 		8A9FC20319164DCF0087E977 /* NSManagedObject+OSReflectionKitDeprecated.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+OSReflectionKitDeprecated.m"; sourceTree = "<group>"; };
+		8A9FC20D191756710087E977 /* TestModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestModel.xcdatamodel; sourceTree = "<group>"; };
+		8A9FC20F191758820087E977 /* TestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestModel.h; sourceTree = "<group>"; };
+		8A9FC210191758820087E977 /* TestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestModel.m; sourceTree = "<group>"; };
+		8A9FC212191758820087E977 /* ChildTestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildTestModel.h; sourceTree = "<group>"; };
+		8A9FC213191758820087E977 /* ChildTestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChildTestModel.m; sourceTree = "<group>"; };
+		8A9FC216191758CE0087E977 /* TestModel+ReflectionKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TestModel+ReflectionKit.h"; sourceTree = "<group>"; };
+		8A9FC217191758CE0087E977 /* TestModel+ReflectionKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TestModel+ReflectionKit.m"; sourceTree = "<group>"; };
+		8A9FC21A1917590A0087E977 /* ChildTestModel+ReflectionKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ChildTestModel+ReflectionKit.h"; sourceTree = "<group>"; };
+		8A9FC21B1917590A0087E977 /* ChildTestModel+ReflectionKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ChildTestModel+ReflectionKit.m"; sourceTree = "<group>"; };
 		8AEDDE0617B042F1003CF0BF /* OSReflectionKit+CoreDataExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "OSReflectionKit+CoreDataExample.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AEDDE0917B042F1003CF0BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8AEDDE0B17B042F1003CF0BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -183,6 +201,9 @@
 			children = (
 				8A9FC1FA19162E0B0087E977 /* NSManagedObject_OSReflectionKitTests.m */,
 				8A9FC1F519162E0B0087E977 /* Supporting Files */,
+				8A9FC20C191756710087E977 /* TestModel.xcdatamodeld */,
+				8A9FC215191758900087E977 /* Models */,
+				8A9FC219191758D60087E977 /* ModelsReflection */,
 			);
 			path = "OSReflectionKit+CoreDataTests";
 			sourceTree = "<group>";
@@ -195,6 +216,28 @@
 				8A9FC1FC19162E0B0087E977 /* OSReflectionKit+CoreDataTests-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8A9FC215191758900087E977 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8A9FC212191758820087E977 /* ChildTestModel.h */,
+				8A9FC213191758820087E977 /* ChildTestModel.m */,
+				8A9FC20F191758820087E977 /* TestModel.h */,
+				8A9FC210191758820087E977 /* TestModel.m */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		8A9FC219191758D60087E977 /* ModelsReflection */ = {
+			isa = PBXGroup;
+			children = (
+				8A9FC216191758CE0087E977 /* TestModel+ReflectionKit.h */,
+				8A9FC217191758CE0087E977 /* TestModel+ReflectionKit.m */,
+				8A9FC21A1917590A0087E977 /* ChildTestModel+ReflectionKit.h */,
+				8A9FC21B1917590A0087E977 /* ChildTestModel+ReflectionKit.m */,
+			);
+			name = ModelsReflection;
 			sourceTree = "<group>";
 		};
 		8AEDDDFD17B042F0003CF0BF = {
@@ -370,7 +413,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A9FC21C1917590A0087E977 /* ChildTestModel+ReflectionKit.m in Sources */,
+				8A9FC214191758820087E977 /* ChildTestModel.m in Sources */,
 				8A9FC1FB19162E0B0087E977 /* NSManagedObject_OSReflectionKitTests.m in Sources */,
+				8A9FC20B191756010087E977 /* NSManagedObject+OSReflectionKitDeprecated.m in Sources */,
+				8A9FC208191756010087E977 /* NSManagedObject+OSReflectionKit.m in Sources */,
+				8A9FC20E191756710087E977 /* TestModel.xcdatamodeld in Sources */,
+				8A9FC20A191756010087E977 /* OSCoreDataManager.m in Sources */,
+				8A9FC211191758820087E977 /* TestModel.m in Sources */,
+				8A9FC218191758CE0087E977 /* TestModel+ReflectionKit.m in Sources */,
+				8A9FC209191756010087E977 /* NSPredicate+OSReflectionKit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -605,6 +657,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
+		8A9FC20C191756710087E977 /* TestModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				8A9FC20D191756710087E977 /* TestModel.xcdatamodel */,
+			);
+			currentVersion = 8A9FC20D191756710087E977 /* TestModel.xcdatamodel */;
+			path = TestModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
 		8AEDDE8617B05806003CF0BF /* OSReflectionKit+CoreDataExample.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (

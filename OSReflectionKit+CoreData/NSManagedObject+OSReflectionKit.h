@@ -320,4 +320,22 @@ Registers the default managed object context for the current class.
  */
 - (BOOL) saveWithContext:(NSManagedObjectContext *) context error:(NSError **) error;
 
+/**
+ Delete all stored objects of the current class.
+ */
++ (void) deleteAll;
+
+/**
+ Delete all stored objects of the current class matching the predicate.
+ @param predicate The predicate object to filter the objects. If nil, it will delete all.
+ */
++ (void) deleteAllWithPredicate:(NSPredicate *) predicate;
+
+/**
+ Delete all stored objects of the current class matching the predicate.
+ @param predicate The predicate object to filter the objects. If nil, it will delete all.
+ @param context The managed object context.
+ */
++ (void) deleteAllWithPredicate:(NSPredicate *) predicate inManagedObjectContext:(NSManagedObjectContext *) context;
+
 @end
