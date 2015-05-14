@@ -286,11 +286,15 @@ static NSManagedObjectContext *_defaultContext = nil;
     return [self fetchWithRequest:request error:nil];
 }
 
-+ (NSArray *) fetchWithRequest:(NSFetchRequest *)request error:(NSError **)error
-{
++ (NSArray *) fetchWithRequest:(NSFetchRequest *)request error:(NSError **)error {
     AssertDefaultManagedObjectContext();
     
-    return [[self defaultManagedObjectContext] executeFetchRequest:request error:error];
+    return [self fetchWithRequest:request inManagedObjectContext:[self defaultManagedObjectContext] error:error];
+}
+
++ (NSArray *) fetchWithRequest:(NSFetchRequest *)request inManagedObjectContext:(NSManagedObjectContext *) context error:(NSError **)error
+{
+    return [context executeFetchRequest:request error:error];
 }
 
 + (NSFetchRequest *) fetchRequestForObjectsWithAttributes:(NSDictionary * ) attributes
@@ -357,7 +361,7 @@ static NSManagedObjectContext *_defaultContext = nil;
 {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:[self entityName]];
     request.predicate = predicate;
-    NSArray *allObjects = [self fetchWithRequest:request];
+    NSArray *allObjects = [self fetchWithRequest:request inManagedObjectContext:context error:nil];
     for (NSManagedObject *object in allObjects) {
         [context deleteObject:object];
     }
